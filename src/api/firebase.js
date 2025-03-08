@@ -4,6 +4,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
+  signInWithRedirect,
   onAuthStateChanged
 } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
@@ -28,7 +29,17 @@ const database = getDatabase(app);
 
 // login
 export function login() {
-  signInWithPopup(auth, provider).catch(console.error);
+  signInWithPopup(auth, provider) //
+    .catch((error) => {
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.warn(
+          'Popup closed before completing sign-in. Switching to redirect...'
+        );
+        signInWithRedirect(auth, provider);
+      } else {
+        console.error('Authentication error:', error);
+      }
+    });
 }
 
 // logout
