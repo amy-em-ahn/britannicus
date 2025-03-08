@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.style.css';
 import { login, logout, onUserStateChange } from '../../api/firebase';
+import User from '../User';
 
 export default function Navbar() {
   const [user, setUser] = useState();
@@ -9,14 +10,6 @@ export default function Navbar() {
   useEffect(() => {
     onUserStateChange(setUser);
   }, []);
-
-  const handleLogin = () => {
-    login().then(setUser);
-  };
-
-  const handleLogout = () => {
-    logout().then(setUser);
-  };
 
   const checkboxRef = useRef(null);
 
@@ -80,9 +73,9 @@ export default function Navbar() {
             <Link to='/auth/register' className='navbar-link'>
               Register
             </Link>
-
-            {!user && <button onClick={handleLogin}> Login </button>}
-            {user && <button onClick={handleLogout}> Logout </button>}
+            {user && <User user={user} />}
+            {!user && <button onClick={login}> Login </button>}
+            {user && <button onClick={logout}> Logout </button>}
           </div>
         </div>
 
@@ -126,8 +119,9 @@ export default function Navbar() {
             >
               Register
             </Link>
-            {!user && <button onClick={handleLogin}> Login </button>}
-            {user && <button onClick={handleLogout}> Logout </button>}
+            {user && <User user={user} />}
+            {!user && <button onClick={login}> Login </button>}
+            {user && <button onClick={logout}> Logout </button>}
           </div>
         </div>
       </div>
