@@ -9,11 +9,6 @@
 - Cart
 - Register / Login
 - Admin
-- (
-  _ Dashboard
-  _ Marketplace
-  \_ Reminder
-  )
 
 ## Routing
 
@@ -75,20 +70,10 @@
   - Total
   - Order button
 
-# Components
+## Components
 
 - Cart icon
   - badge
-
-## Firebase
-
-```
-npm install firebase
-```
-
-## Cloudinary
-
-https://api.cloudinary.com/v1_1/<cloud name>/<resource_type>/upload
 
 ## React helmet
 
@@ -105,7 +90,17 @@ npm install react-icons --save
 ## CSS - postcss, tailwind
 
 ```
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-npm install postcss postcss-import postcss-nested postcss-custom-properties autoprefixer postcss-preset-env
+npm install --save-dev tailwindcss@3 postcss autoprefixer //4는 아직 불안정
 ```
+
+## Firebase
+
+```
+npm install firebase
+```
+
+https://firebase.google.com/docs/auth/web/google-signin
+
+## Cloudinary
+
+https://api.cloudinary.com/v1_1/<cloud name>/<resource_type>/upload

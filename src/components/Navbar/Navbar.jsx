@@ -1,8 +1,26 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.style.css';
+import { login, logout, onUserStateChange } from '../../api/firebase';
 
 export default function Navbar() {
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    onUserStateChange((user) => {
+      console.log(user);
+      setUser(user);
+    });
+  }, []);
+
+  const handleLogin = () => {
+    login().then(setUser);
+  };
+
+  const handleLogout = () => {
+    logout().then(setUser);
+  };
+
   const checkboxRef = useRef(null);
 
   const closeMenu = () => {
@@ -65,9 +83,9 @@ export default function Navbar() {
             <Link to='/auth/register' className='navbar-link'>
               Register
             </Link>
-            <Link to='/auth/login' className='navbar-login-btn'>
-              Login
-            </Link>
+
+            {!user && <button onClick={handleLogin}> Login </button>}
+            {user && <button onClick={handleLogout}> Logout </button>}
           </div>
         </div>
 
@@ -111,13 +129,8 @@ export default function Navbar() {
             >
               Register
             </Link>
-            <Link
-              to='/auth/login'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              Login
-            </Link>
+            {!user && <button onClick={handleLogin}> Login </button>}
+            {user && <button onClick={handleLogout}> Logout </button>}
           </div>
         </div>
       </div>
