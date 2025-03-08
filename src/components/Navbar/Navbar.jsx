@@ -8,7 +8,10 @@ export default function Navbar() {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    onUserStateChange(setUser);
+    onUserStateChange((user) => {
+      console.log('setUser:', user);
+      setUser(user);
+    });
   }, []);
 
   const checkboxRef = useRef(null);
