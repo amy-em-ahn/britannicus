@@ -1,30 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.style.css';
-import {
-  login,
-  logout,
-  onUserStateChange,
-  handleRedirectResult
-} from '../../api/firebase';
 import User from '../User';
 import Button from '../ui/Button';
+import { useAuthContext } from '../context/AuthContext';
 
 export default function Navbar() {
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    // Handle redirect results when the page loads
-    handleRedirectResult().then((redirectUser) => {
-      if (redirectUser) {
-        console.log('User signed in after redirect:', redirectUser);
-      }
-    });
-
-    // Set up auth state listener
-    onUserStateChange(setUser);
-  }, []);
-
+  // check user using authContext
+  const { user, login, logout } = useAuthContext();
   const checkboxRef = useRef(null);
 
   const closeMenu = () => {
@@ -72,25 +55,29 @@ export default function Navbar() {
 
         <div className='navbar-right'>
           <div className='navbar-auth'>
-            <Link to='/cart' className='navbar-cart'>
-              <svg
-                className='navbar-cart-icon'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              >
-                <circle cx='9' cy='21' r='1'></circle>
-                <circle cx='20' cy='21' r='1'></circle>
-                <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'></path>
-              </svg>{' '}
-              My Cart
-            </Link>
-            <Link to='/auth/register' className='navbar-link'>
-              Register
-            </Link>
+            {user && (
+              <Link to='/cart' className='navbar-cart'>
+                <svg
+                  className='navbar-cart-icon'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                >
+                  <circle cx='9' cy='21' r='1'></circle>
+                  <circle cx='20' cy='21' r='1'></circle>
+                  <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'></path>
+                </svg>{' '}
+                My Cart
+              </Link>
+            )}
+            {!user && (
+              <Link to='/auth/register' className='navbar-link'>
+                Register
+              </Link>
+            )}
             {user && <User user={user} />}
             {!user && <Button text={'Login'} onClick={login} />}
             {user && <Button text={'Logout'} onClick={logout} />}

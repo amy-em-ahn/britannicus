@@ -17,6 +17,7 @@ import ProductDetail from './pages/Products/ProductDetail';
 import MyCart from './pages/MyCart/MyCart';
 import NotFound from './pages/NotFount/NotFound';
 import Admin from './pages/Admin/Admin';
+import ProtectedRoute from './pages/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -52,7 +53,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/cart',
-        element: <MyCart />
+        element: (
+          <ProtectedRoute>
+            <MyCart />
+          </ProtectedRoute>
+        )
       },
       {
         path: '/admin',
