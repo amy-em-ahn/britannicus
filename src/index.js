@@ -14,8 +14,8 @@ import Register from './pages/Auth/Register';
 import AllProducts from './pages/Products/AllProducts';
 import NewProduct from './pages/Products/NewProduct';
 import ProductDetail from './pages/Products/ProductDetail';
-import MyCart from './pages/MyCart';
-import NotFound from './pages/NotFound';
+import MyCart from './pages/MyCart/MyCart';
+import NotFound from './pages/NotFount/NotFound';
 import Admin from './pages/Admin/Admin';
 
 const queryClient = new QueryClient();
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         element: <ProductDetail />
       },
       {
-        path: '/carts',
+        path: '/cart',
         element: <MyCart />
       },
       {
@@ -66,6 +66,7 @@ console.log('Router loaded:', router);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    {/* title */}
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />

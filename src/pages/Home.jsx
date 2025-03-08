@@ -1,5 +1,17 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 
 export default function Home() {
-  return <div>Home</div>;
+  // useEffect(() => {
+  //   document.title = 'All Products | Britannicus BMS';
+  // }, []);
+
+  return (
+    <>
+      <Helmet>
+        <title>Home | Britannicus BMS</title>
+      </Helmet>
+      <div>Home</div>
+    </>
+  );
 }

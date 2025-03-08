@@ -90,4 +90,22 @@ npm install firebase
 
 https://api.cloudinary.com/v1_1/<cloud name>/<resource_type>/upload
 
+## React helmet
+
+```
+npm install react-helmet-async
+```
+
 ## React icons
+
+```
+npm install react-icons --save
+```
+
+## CSS - postcss, tailwind
+
+```
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+npm install postcss postcss-import postcss-nested postcss-custom-properties autoprefixer postcss-preset-env
+```
