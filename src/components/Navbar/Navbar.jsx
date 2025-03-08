@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.style.css';
-import { login, logout, onUserStateChange } from '../../api/firebase';
+import {
+  login,
+  logout,
+  onUserStateChange,
+  handleRedirectResult
+} from '../../api/firebase';
 import User from '../User';
 import Button from '../ui/Button';
 
@@ -9,10 +14,15 @@ export default function Navbar() {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    onUserStateChange((user) => {
-      console.log('setUser:', user);
-      setUser(user);
+    // Handle redirect results when the page loads
+    handleRedirectResult().then((redirectUser) => {
+      if (redirectUser) {
+        console.log('User signed in after redirect:', redirectUser);
+      }
     });
+
+    // Set up auth state listener
+    onUserStateChange(setUser);
   }, []);
 
   const checkboxRef = useRef(null);
