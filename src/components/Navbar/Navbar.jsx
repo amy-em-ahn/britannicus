@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Navbar.style.css';
 import { login, logout, onUserStateChange } from '../../api/firebase';
 import User from '../User';
+import Button from '../ui/Button';
 
 export default function Navbar() {
   const [user, setUser] = useState();
@@ -30,10 +31,14 @@ export default function Navbar() {
             Britannicus
           </Link>
 
+          {/* if user is admin, show admin menu */}
           <nav className='navbar-primary-links'>
-            <Link to='/admin' className='navbar-link'>
-              Admin
-            </Link>
+            {user && user.isAdmin && (
+              <Link to='/admin' className='navbar-link'>
+                Admin
+              </Link>
+            )}
+
             <div className='navbar-dropdown'>
               <Link to='/products' className='navbar-link'>
                 Products
@@ -77,8 +82,8 @@ export default function Navbar() {
               Register
             </Link>
             {user && <User user={user} />}
-            {!user && <button onClick={login}> Login </button>}
-            {user && <button onClick={logout}> Logout </button>}
+            {!user && <Button text={'Login'} onClick={login} />}
+            {user && <Button text={'Logout'} onClick={logout} />}
           </div>
         </div>
 
@@ -98,13 +103,15 @@ export default function Navbar() {
 
           {/* Mobile menu */}
           <div className='navbar-mobile-menu'>
-            <Link
-              to='/admin'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              Admin
-            </Link>
+            {user && user.isAdmin && (
+              <Link
+                to='/admin'
+                className='navbar-mobile-link'
+                onClick={closeMenu}
+              >
+                Admin
+              </Link>
+            )}
             <Link
               to='/products'
               className='navbar-mobile-link'
@@ -123,8 +130,8 @@ export default function Navbar() {
               Register
             </Link>
             {user && <User user={user} />}
-            {!user && <button onClick={login}> Login </button>}
-            {user && <button onClick={logout}> Logout </button>}
+            {!user && <Button text={'Login'} onClick={login} />}
+            {user && <Button text={'Logout'} onClick={logout} />}
           </div>
         </div>
       </div>
