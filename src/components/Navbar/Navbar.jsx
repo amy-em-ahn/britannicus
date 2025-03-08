@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.style.css';
 
 export default function Navbar() {
+  const checkboxRef = useRef(null);
+
+  const closeMenu = () => {
+    if (checkboxRef.current) {
+      checkboxRef.current.checked = false;
+    }
+  };
+
   return (
     <header className='navbar'>
       <div className='navbar-container'>
@@ -66,6 +74,7 @@ export default function Navbar() {
         {/* Mobile menu */}
         <div className='navbar-mobile-toggle'>
           <input
+            ref={checkboxRef}
             type='checkbox'
             id='menu-toggle'
             className='navbar-mobile-checkbox'
@@ -78,19 +87,35 @@ export default function Navbar() {
 
           {/* Mobile menu */}
           <div className='navbar-mobile-menu'>
-            <Link to='/admin' className='navbar-mobile-link'>
+            <Link
+              to='/admin'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
               Admin
             </Link>
-            <Link to='/products' className='navbar-mobile-link'>
+            <Link
+              to='/products'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
               Products
             </Link>
-            <Link to='/cart' className='navbar-mobile-link'>
+            <Link to='/cart' className='navbar-mobile-link' onClick={closeMenu}>
               Cart
             </Link>
-            <Link to='/auth/register' className='navbar-mobile-link'>
+            <Link
+              to='/auth/register'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
               Register
             </Link>
-            <Link to='/auth/login' className='navbar-mobile-link'>
+            <Link
+              to='/auth/login'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
               Login
             </Link>
           </div>

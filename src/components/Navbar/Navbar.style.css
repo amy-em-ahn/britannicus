@@ -1,4 +1,5 @@
 .navbar {
+    background-color: transparent;
     color: white;
     padding: 1rem;
     position: absolute;
@@ -90,7 +91,6 @@
 }
 
 .navbar-login-btn {
-    background-color: #5e3410;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
@@ -129,22 +129,30 @@
 
 .navbar-mobile-menu {
     display: none;
-    position: absolute;
-    left: 0;
-    top: 100%;
-    width: 100%;
+    position: fixed;
+    right: 0;
+    top: 100;
+    width: 30%;
+    background-color: #010002;
+    border-radius: 16px;
     padding: 1rem;
     flex-direction: column;
-    gap: 0.75rem;
-    z-index: 100;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 90;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
 }
 
 .navbar-mobile-link {
     color: white;
     text-decoration: none;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
+    font-size: 1.2rem;
     transition: color 0.2s;
+    text-align: center;
+    width: 100%;
 }
 
 .navbar-mobile-link:hover {
@@ -154,6 +162,7 @@
 /* Mobile menu */
 .navbar-mobile-checkbox:checked~.navbar-mobile-menu {
     display: flex;
+    transform: translateX(-50%) scaleX(1);
 }
 
 .navbar-mobile-checkbox:checked~.navbar-mobile-icon .navbar-mobile-icon-bar:nth-child(1) {
