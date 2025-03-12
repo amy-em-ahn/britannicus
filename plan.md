@@ -103,4 +103,9 @@ https://firebase.google.com/docs/auth/web/google-signin
 
 ## Cloudinary
 
+https://cloudinary.com/documentation/client_side_uploading#code_explorer_upload_multiple_files_using_a_form_unsigned
+
 https://api.cloudinary.com/v1_1/<cloud name>/<resource_type>/upload
+doiqoi3of
+PID: ea445541-ea5d-4c30-8bd9-bba5af00e064
+Upload preset name: britannicus

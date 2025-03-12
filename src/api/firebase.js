@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { v4 as uuid } from 'uuid';
 import {
   getAuth,
   signInWithPopup,
@@ -6,7 +7,7 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
-import { getDatabase, ref, get } from 'firebase/database';
+import { getDatabase, ref, get, set } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -20,7 +21,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 // Google Auth Provider
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
@@ -62,4 +63,15 @@ async function adminUser(user) {
     });
 }
 
-export { app };
+// add new products
+export async function addNewProduct(product, imageUrl) {
+  const id = uuid();
+  return set(ref(database, `products/${id}`), {
+    ...product,
+    id,
+    price: parseInt(product.price),
+    image: imageUrl,
+    year: product.year ? parseInt(product.year) : '',
+    createdAt: new Date().toISOString()
+  });
+}
