@@ -5,22 +5,9 @@ import CustomSelect from './CustomSelect';
 import Button from './ui/Button';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
+import { initialProductState } from '../config/productState';
 
 const ProductForm = () => {
-  const initialProductState = {
-    category: '',
-    title: '',
-    price: '',
-    currency: 'USD',
-    stock: '',
-    publishedby: '',
-    year: '',
-    seller: '',
-    location: '',
-    description: '',
-    options: ''
-  };
-
   const [product, setProduct] = useState(initialProductState);
   const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -208,6 +195,7 @@ const ProductForm = () => {
                     value={product.stock}
                     onChange={handleChange}
                     placeholder='Stock (PCS)'
+                    required
                     className={inputStyles}
                   />
                 </div>

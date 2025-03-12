@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import Products from './Products';
 
 export default function AllProducts() {
   return (
@@ -7,7 +8,7 @@ export default function AllProducts() {
       <Helmet>
         <title>All Products | Britannicus BMS</title>
       </Helmet>
-      <div>AllProducts</div>
+      <Products />
     </>
   );
 }
