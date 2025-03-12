@@ -8,7 +8,9 @@ const router = express.Router();
 
 
 
-router.get("/products", productController.getAllProducts);
+//router.get("/products", productController.getAllProducts);
+router.get("/products", productController.getProducts);
+
 router.get("/products/featured", productController.getFeatured);
 router.get("/products/first-editions", productController.getFirstEditions);
 router.get("/products/rare-books", productController.getRareBooks);
