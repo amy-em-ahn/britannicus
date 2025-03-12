@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.style.css';
 import User from '../User';
 import Button from '../ui/Button';
@@ -8,13 +8,19 @@ import DropdownMenu from '../../components/ui/DropdownMenu/DropdownMenu';
 
 export default function Navbar() {
   // check user using authContext
-  const { user, login, logout } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const checkboxRef = useRef(null);
+  const navigate = useNavigate();
 
   const closeMenu = () => {
     if (checkboxRef.current) {
       checkboxRef.current.checked = false;
     }
+  };
+
+  const handleLogin = () => {
+    // Navigate to login page
+    navigate('/auth/login');
   };
 
   // Products dropdown menu items
@@ -71,17 +77,12 @@ export default function Navbar() {
               </Link>
             )}
             {!user && (
-              <>
-                <Link to='/auth/register' className='navbar-link'>
-                  Register
-                </Link>
-                <Link to='/auth/login' className='navbar-link'>
-                  Login2
-                </Link>
-              </>
+              <Link to='/auth/register' className='navbar-link'>
+                Register
+              </Link>
             )}
             {user && <User user={user} />}
-            {!user && <Button text={'Login'} onClick={login} />}
+            {!user && <Button text={'Login'} onClick={handleLogin} />}
             {user && <Button text={'Logout'} onClick={logout} />}
           </div>
         </div>
@@ -230,17 +231,10 @@ export default function Navbar() {
                   >
                     Register
                   </Link>
-                  <Link
-                    to='/auth/login'
-                    className='navbar-mobile-link'
-                    onClick={closeMenu}
-                  >
-                    Login2
-                  </Link>
                   <Button
                     text={'Login'}
                     onClick={() => {
-                      login();
+                      handleLogin();
                       closeMenu();
                     }}
                   />
