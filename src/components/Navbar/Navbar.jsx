@@ -75,23 +75,13 @@ export default function Navbar() {
                 <Link to='/auth/register' className='navbar-link'>
                   Register
                 </Link>
-                <Link to='/auth/login2' className='navbar-link'>
+                <Link to='/auth/login' className='navbar-link'>
                   Login2
                 </Link>
               </>
             )}
             {user && <User user={user} />}
-            {/* {!user && <Button icon={"FaGoogle"} text={'Login'} onClick={login} />}
-            {!user && <Button text={'Login'} />  } */}
-            {!user && (
-              <Link
-                to='/auth/login'
-                className='navbar-mobile-link'
-                onClick={closeMenu}
-              >
-                Login
-              </Link>
-            )}
+            {!user && <Button text={'Login'} onClick={login} />}
             {user && <Button text={'Logout'} onClick={logout} />}
           </div>
         </div>
@@ -112,83 +102,164 @@ export default function Navbar() {
 
           {/* Mobile menu */}
           <div className='navbar-mobile-menu'>
-            {user && user.isAdmin && (
-              <>
+            <div className='navbar-mobile-menu-header'>
+              <div className='navbar-mobile-menu-title'>Britannicus</div>
+              <button className='navbar-mobile-close-btn' onClick={closeMenu}>
+                ✕
+              </button>
+            </div>
+
+            <div className='navbar-mobile-nav'>
+              <Link to='/' className='navbar-mobile-link' onClick={closeMenu}>
+                Home
+              </Link>
+
+              {/* Admin dropdown */}
+              {user && user.isAdmin && (
+                <div className='navbar-mobile-dropdown'>
+                  <button className='navbar-mobile-dropdown-toggle'>
+                    Admin
+                    <svg
+                      className='navbar-mobile-dropdown-icon'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth='2'
+                        d='M19 9l-7 7-7-7'
+                      />
+                    </svg>
+                  </button>
+                  <div className='navbar-mobile-dropdown-menu'>
+                    <Link
+                      to='/admin/books'
+                      className='navbar-mobile-dropdown-item'
+                      onClick={closeMenu}
+                    >
+                      Add Books
+                    </Link>
+                    <Link
+                      to='/admin/maps'
+                      className='navbar-mobile-dropdown-item'
+                      onClick={closeMenu}
+                    >
+                      Add Maps
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* Products dropdown */}
+              <div className='navbar-mobile-dropdown'>
+                <button className='navbar-mobile-dropdown-toggle'>
+                  Products
+                  <svg
+                    className='navbar-mobile-dropdown-icon'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth='2'
+                      d='M19 9l-7 7-7-7'
+                    />
+                  </svg>
+                </button>
+                <div className='navbar-mobile-dropdown-menu'>
+                  <Link
+                    to='/products'
+                    className='navbar-mobile-dropdown-item'
+                    onClick={closeMenu}
+                  >
+                    All Products
+                  </Link>
+                  <Link
+                    to='/products/rare-books'
+                    className='navbar-mobile-dropdown-item'
+                    onClick={closeMenu}
+                  >
+                    Rare Books
+                  </Link>
+                  <Link
+                    to='/products/maps'
+                    className='navbar-mobile-dropdown-item'
+                    onClick={closeMenu}
+                  >
+                    Vintage Maps
+                  </Link>
+                  <Link
+                    to='/products/periodicals'
+                    className='navbar-mobile-dropdown-item'
+                    onClick={closeMenu}
+                  >
+                    Periodicals
+                  </Link>
+                  <Link
+                    to='/products/first-editions'
+                    className='navbar-mobile-dropdown-item'
+                    onClick={closeMenu}
+                  >
+                    First Editions
+                  </Link>
+                </div>
+              </div>
+
+              {user && (
                 <Link
-                  to='/admin'
+                  to='/cart'
                   className='navbar-mobile-link'
                   onClick={closeMenu}
                 >
-                  Admin Dashboard
+                  My Cart
                 </Link>
-                <Link
-                  to='/admin/users'
-                  className='navbar-mobile-link'
-                  onClick={closeMenu}
-                >
-                  Manage Users
-                </Link>
-                <Link
-                  to='/admin/orders'
-                  className='navbar-mobile-link'
-                  onClick={closeMenu}
-                >
-                  Orders
-                </Link>
-              </>
-            )}
-            <Link
-              to='/products'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              All Products
-            </Link>
-            <Link
-              to='/products/genre'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              Genre
-            </Link>
-            <Link
-              to='/products/in-stock'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              In stock
-            </Link>
-            <Link
-              to='/products/condition'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              Condition
-            </Link>
-            <Link to='/cart' className='navbar-mobile-link' onClick={closeMenu}>
-              Cart
-            </Link>
-            {!user && (
-              <>
-                <Link
-                  to='/auth/register'
-                  className='navbar-mobile-link'
-                  onClick={closeMenu}
-                >
-                  Register
-                </Link>
-                <Link
-                  to='/auth/login2'
-                  className='navbar-mobile-link'
-                  onClick={closeMenu}
-                >
-                  Login2
-                </Link>
-              </>
-            )}
-            {user && <User user={user} />}
-            {!user && <Button text={'Login'} onClick={login} />}
-            {user && <Button text={'Logout'} onClick={logout} />}
+              )}
+            </div>
+
+            <div className='navbar-mobile-auth'>
+              {!user && (
+                <>
+                  <Link
+                    to='/auth/register'
+                    className='navbar-mobile-link'
+                    onClick={closeMenu}
+                  >
+                    Register
+                  </Link>
+                  <Link
+                    to='/auth/login'
+                    className='navbar-mobile-link'
+                    onClick={closeMenu}
+                  >
+                    Login2
+                  </Link>
+                  <Button
+                    text={'Login'}
+                    onClick={() => {
+                      login();
+                      closeMenu();
+                    }}
+                  />
+                </>
+              )}
+
+              {user && (
+                <>
+                  <User user={user} />
+                  <Button
+                    text={'Logout'}
+                    onClick={() => {
+                      logout();
+                      closeMenu();
+                    }}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
