@@ -13,9 +13,6 @@ export default function Login({handleFunction, darkMode}) {
   } else {
     background = 'bg-white'
   }
-  if (user) {
-      console.log(user)
-  }
   return (
     <>
       <Helmet>
