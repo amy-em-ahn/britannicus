@@ -21,8 +21,6 @@ import ProductDetail from './pages/Products/ProductDetail';
 import MyCart from './pages/MyCart/MyCart';
 import NotFound from './pages/NotFount/NotFound';
 import Admin from './pages/Admin/Admin';
-import AdminBooks from './pages/Admin/AdminBooks';
-import AdminMaps from './pages/Admin/AdminMaps';
 import ProtectedRoute from './pages/ProtectedRoute';
 
 const queryClient = new QueryClient();
@@ -90,18 +88,10 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: '/admin/books',
+        path: '/admin/:productType',
         element: (
           <ProtectedRoute requiredAdmin={true}>
-            <AdminBooks />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/admin/maps',
-        element: (
-          <ProtectedRoute requiredAdmin={true}>
-            <AdminMaps />
+            <Admin />
           </ProtectedRoute>
         )
       }
