@@ -119,13 +119,15 @@ export default function Navbar() {
             <Link to='/cart' className='navbar-mobile-link' onClick={closeMenu}>
               Cart
             </Link>
-            <Link
-              to='/auth/register'
-              className='navbar-mobile-link'
-              onClick={closeMenu}
-            >
-              Register
-            </Link>
+            {!user && (
+              <Link
+                to='/auth/register'
+                className='navbar-mobile-link'
+                onClick={closeMenu}
+              >
+                Register
+              </Link>
+            )}
             {user && <User user={user} />}
             {!user && <Button text={'Login'} onClick={login} />}
             {user && <Button text={'Logout'} onClick={logout} />}
