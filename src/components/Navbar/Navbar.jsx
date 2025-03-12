@@ -4,6 +4,7 @@ import './Navbar.style.css';
 import User from '../User';
 import Button from '../ui/Button';
 import { useAuthContext } from '../context/AuthContext';
+import DropdownMenu from '../../components/ui/DropdownMenu/DropdownMenu';
 
 export default function Navbar() {
   // check user using authContext
@@ -16,6 +17,20 @@ export default function Navbar() {
     }
   };
 
+  // Products dropdown menu items
+  const productsMenuItems = [
+    { label: 'Rare Books', path: '/products/rare-books' },
+    { label: 'Vintage Maps', path: '/products/maps' },
+    { label: 'Periodicals', path: '/products/periodicals' },
+    { label: 'First Editions', path: '/products/first-editions' }
+  ];
+
+  // Admin dropdown menu items
+  const adminMenuItems = [
+    { label: 'Add Books', path: '/admin/books' },
+    { label: 'Add maps', path: '/admin/maps' }
+  ];
+
   return (
     <header className='navbar'>
       <div className='navbar-container'>
@@ -24,32 +39,14 @@ export default function Navbar() {
             Britannicus
           </Link>
 
-          {/* if user is admin, show admin menu */}
           <nav className='navbar-primary-links'>
+            {/* Admin dropdown */}
             {user && user.isAdmin && (
-              <Link to='/admin' className='navbar-link'>
-                Admin
-              </Link>
+              <DropdownMenu title='Admin' menuItems={adminMenuItems} />
             )}
 
-            <div className='navbar-dropdown'>
-              <Link to='/products' className='navbar-link'>
-                Products
-                <svg
-                  className='navbar-dropdown-icon'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M19 9l-7 7-7-7'
-                  />
-                </svg>
-              </Link>
-            </div>
+            {/* Products dropdown */}
+            <DropdownMenu title='Products' menuItems={productsMenuItems} />
           </nav>
         </div>
 
@@ -74,9 +71,14 @@ export default function Navbar() {
               </Link>
             )}
             {!user && (
-              <Link to='/auth/register' className='navbar-link'>
-                Register
-              </Link>
+              <>
+                <Link to='/auth/register' className='navbar-link'>
+                  Register
+                </Link>
+                <Link to='/auth/login2' className='navbar-link'>
+                  Login2
+                </Link>
+              </>
             )}
             {user && <User user={user} />}
             {/* {!user && <Button icon={"FaGoogle"} text={'Login'} onClick={login} />}
@@ -111,32 +113,78 @@ export default function Navbar() {
           {/* Mobile menu */}
           <div className='navbar-mobile-menu'>
             {user && user.isAdmin && (
-              <Link
-                to='/admin'
-                className='navbar-mobile-link'
-                onClick={closeMenu}
-              >
-                Admin
-              </Link>
+              <>
+                <Link
+                  to='/admin'
+                  className='navbar-mobile-link'
+                  onClick={closeMenu}
+                >
+                  Admin Dashboard
+                </Link>
+                <Link
+                  to='/admin/users'
+                  className='navbar-mobile-link'
+                  onClick={closeMenu}
+                >
+                  Manage Users
+                </Link>
+                <Link
+                  to='/admin/orders'
+                  className='navbar-mobile-link'
+                  onClick={closeMenu}
+                >
+                  Orders
+                </Link>
+              </>
             )}
             <Link
               to='/products'
               className='navbar-mobile-link'
               onClick={closeMenu}
             >
-              Products
+              All Products
+            </Link>
+            <Link
+              to='/products/genre'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
+              Genre
+            </Link>
+            <Link
+              to='/products/in-stock'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
+              In stock
+            </Link>
+            <Link
+              to='/products/condition'
+              className='navbar-mobile-link'
+              onClick={closeMenu}
+            >
+              Condition
             </Link>
             <Link to='/cart' className='navbar-mobile-link' onClick={closeMenu}>
               Cart
             </Link>
             {!user && (
-              <Link
-                to='/auth/register'
-                className='navbar-mobile-link'
-                onClick={closeMenu}
-              >
-                Register
-              </Link>
+              <>
+                <Link
+                  to='/auth/register'
+                  className='navbar-mobile-link'
+                  onClick={closeMenu}
+                >
+                  Register
+                </Link>
+                <Link
+                  to='/auth/login2'
+                  className='navbar-mobile-link'
+                  onClick={closeMenu}
+                >
+                  Login2
+                </Link>
+              </>
             )}
             {user && <User user={user} />}
             {!user && <Button text={'Login'} onClick={login} />}
