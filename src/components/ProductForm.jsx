@@ -116,7 +116,7 @@ const ProductForm = () => {
                   required
                 >
                   <option value='' disabled>
-                    Select Product Options
+                    Select Seller
                   </option>
                   <option value='Individual'>Individual</option>
                   <option value='Auction'>Auction</option>
@@ -169,7 +169,7 @@ const ProductForm = () => {
                     }}
                   >
                     <option value='USD'>USD</option>
-                    <option value='EUR'>EUR</option>
+                    <option value='CAN'>CAN</option>
                   </select>
                   {/* arrow */}
                   <div className='absolute inset-y-0 right-4 flex items-center pointer-events-none'>
