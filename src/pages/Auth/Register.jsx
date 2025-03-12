@@ -1,13 +1,16 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-
-export default function Register() {
+import RegisterForm from '../../components/RegisterForm';
+function passTo() {
+  console.log("function ran")
+}
+export default function Register({darkMode}) {
   return (
-    <>
+    <div>
       <Helmet>
         <title>Register | Britannicus BMS</title>
       </Helmet>
-      <div>Register</div>
-    </>
+      <RegisterForm handleFunction={passTo} darkMode={darkMode}/>
+    </div>
   );
 }
