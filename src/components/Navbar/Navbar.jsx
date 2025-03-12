@@ -47,9 +47,7 @@ export default function Navbar() {
 
           <nav className='navbar-primary-links'>
             {/* Admin dropdown */}
-            {user && user.isAdmin && (
-              <DropdownMenu title='Admin' menuItems={adminMenuItems} />
-            )}
+            {user && <DropdownMenu title='Admin' menuItems={adminMenuItems} />}
 
             {/* Products dropdown */}
             <DropdownMenu title='Products' menuItems={productsMenuItems} />
@@ -116,7 +114,7 @@ export default function Navbar() {
               </Link>
 
               {/* Admin dropdown */}
-              {user && user.isAdmin && (
+              {user && (
                 <div className='navbar-mobile-dropdown'>
                   <button className='navbar-mobile-dropdown-toggle'>
                     Admin
