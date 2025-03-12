@@ -79,7 +79,17 @@ export default function Navbar() {
               </Link>
             )}
             {user && <User user={user} />}
-            {!user && <Button text={'Login'} onClick={login} />}
+            {/* {!user && <Button icon={"FaGoogle"} text={'Login'} onClick={login} />}
+            {!user && <Button text={'Login'} />  } */}
+            {!user && (
+              <Link
+                to='/auth/login'
+                className='navbar-mobile-link'
+                onClick={closeMenu}
+              >
+                Login
+              </Link>
+            )}
             {user && <Button text={'Logout'} onClick={logout} />}
           </div>
         </div>
