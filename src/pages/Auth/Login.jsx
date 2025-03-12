@@ -3,9 +3,10 @@ import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
 import { useAuthContext } from '../../components/context/AuthContext';
 import Input from '../../components/ui/Input';
+import { Navigate, Route } from 'react-router-dom';
 
 export default function Login({handleFunction, darkMode}) {
-  const {login}= useAuthContext();
+  const {user, login}= useAuthContext();
   let background = ''
   if (darkMode) {
     background = 'bg-slate-700'
@@ -28,7 +29,7 @@ export default function Login({handleFunction, darkMode}) {
         <h2 className={darkMode ? "text-xl text-white" : "text-xl"}>Other Options</h2>
         <Button icon={'FaGoogle'}text={'Sign in using Google'} onClick={login} />
       </div>
-      
+      {user ? <Navigate to={"/"}/> : ""}
     </>
   );
 }
