@@ -8,16 +8,35 @@
     position: relative;
 }
 
+.sub-page-header {
+    position: relative;
+}
+
 .main-content {
     flex: 1;
-    padding: 2rem 1rem;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.hero-with-nav+.main-content {
+    margin-top: 0;
+}
+
+/* header and content overlap */
+.sub-page-header+.main-content {
+    margin-top: -0.5rem;
+    background-color: white;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    position: relative;
+    z-index: 10;
 }
 
 @media (max-width: 768px) {
-    .main-content {
-        padding: 1.5rem 1rem;
+    .sub-page-header {
+        padding-bottom: 1.5rem;
+    }
+
+    .sub-page-header+.main-content {
+        margin-top: -0.75rem;
     }
 }
