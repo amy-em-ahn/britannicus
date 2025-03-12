@@ -75,3 +75,13 @@ export async function addNewProduct(product, imageUrl) {
     createdAt: new Date().toISOString()
   });
 }
+
+// get products
+export async function getProducts() {
+  return get(ref(database, 'products')).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
+}
