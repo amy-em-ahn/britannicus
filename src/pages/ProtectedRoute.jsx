@@ -12,10 +12,7 @@ export default function ProtectedRoute({ children, requiredAdmin }) {
     condition: !user || (requiredAdmin && !user.isAdmin)
   });
 
-  // isAdmin?
-  // requiredAdmin is true, login + Admin
-  // if not redirect to home
-  if (!user || (requiredAdmin && !user.isAdmin)) {
+  if (!user) {
     return <Navigate to='/' replace />;
   }
 

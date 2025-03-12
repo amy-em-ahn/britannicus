@@ -11,11 +11,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Home from './pages/Home';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
-import AllProducts from './pages/Products/AllProducts';
-import RareBooks from './pages/Products/RareBooks';
-import Maps from './pages/Products/Maps';
-import Periodicals from './pages/Products/Periodicals';
-import FirstEditions from './pages/Products/FirstEditions';
+import Products from './pages/Products/Products';
 import NewProduct from './pages/Products/NewProduct';
 import ProductDetail from './pages/Products/ProductDetail';
 import MyCart from './pages/MyCart/MyCart';
@@ -45,23 +41,23 @@ const router = createBrowserRouter([
       },
       {
         path: '/products',
-        element: <AllProducts />
+        element: <Products />
       },
       {
         path: '/products/rare-books',
-        element: <RareBooks />
+        element: <Products />
       },
       {
         path: '/products/maps',
-        element: <Maps />
+        element: <Products />
       },
       {
         path: '/products/periodicals',
-        element: <Periodicals />
+        element: <Products />
       },
       {
         path: '/products/first-editions',
-        element: <FirstEditions />
+        element: <Products />
       },
       {
         path: '/products/new',
