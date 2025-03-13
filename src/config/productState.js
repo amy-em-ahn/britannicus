@@ -20,7 +20,7 @@ export const initialBookState = {
 
 export const initialMapState = {
   image: '',
-  category: 'Vintage maps',
+  category: 'maps',
   options: '',
   title: '',
   price: '',

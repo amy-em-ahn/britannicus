@@ -11,7 +11,7 @@ import CommonProductFields from './CommonProductFields';
 const MapUploadForm = () => {
   const initialState = {
     ...initialMapState,
-    category: 'Vintage maps'
+    category: 'maps'
   };
 
   const [product, setProduct] = useState(initialState);
@@ -37,7 +37,7 @@ const MapUploadForm = () => {
     // Ensure category is set before submitting
     const submittingProduct = {
       ...product,
-      category: product.category || 'Vintage maps'
+      category: product.category || 'maps'
     };
 
     const imageFile = images[0].file;

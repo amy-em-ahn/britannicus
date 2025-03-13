@@ -68,9 +68,9 @@ const BookUploadForm = () => {
       <option value='' disabled>
         Select Product Category
       </option>
-      <option value='Rare Books'>Rare Books</option>
-      <option value='Periodicals'>Periodicals</option>
-      <option value='First Editions'>First Editions</option>
+      <option value='rare-books'>Rare Books</option>
+      <option value='periodicals'>Periodicals</option>
+      <option value='first-editions'>First Editions</option>
     </>
   );
 
