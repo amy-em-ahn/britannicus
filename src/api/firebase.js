@@ -77,10 +77,16 @@ export async function addNewProduct(product, imageUrl) {
 }
 
 // get products
-export async function getProducts() {
+export async function getProducts(category) {
   return get(ref(database, 'products')).then((snapshot) => {
     if (snapshot.exists()) {
-      return Object.values(snapshot.val());
+      const products = Object.values(snapshot.val());
+
+      if (category) {
+        return products.filter((product) => product.category === category);
+      }
+
+      return products;
     }
     return [];
   });
