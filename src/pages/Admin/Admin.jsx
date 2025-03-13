@@ -1,18 +1,20 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
-import ProductForm from '../../components/ProductForm';
+import { useLocation } from 'react-router-dom';
+import BookUploadForm from '../../components/BookUploadForm';
+import MapUploadForm from '../../components/MapUploadForm';
 
 export default function Admin() {
-  const { productType } = useParams();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  let title = 'Add New Book';
-  let formType = 'general';
+  let title = 'Admin Dashboard';
+  let formType = '';
 
-  if (productType === 'books') {
+  if (currentPath.includes('/admin/books')) {
     title = 'Add New Book';
     formType = 'book';
-  } else if (productType === 'maps') {
+  } else if (currentPath.includes('/admin/maps')) {
     title = 'Add New Map';
     formType = 'map';
   }
@@ -20,11 +22,21 @@ export default function Admin() {
   return (
     <>
       <Helmet>
-        <title>Admin | Britannicus BMS</title>
+        <title>{title} | Britannicus BMS</title>
       </Helmet>
-      <section className='w-full text-center'>
-        <h1 className='text-2xl font-bold mt-4'>{title}</h1>
-        <ProductForm type={formType} />
+      <section className='w-full'>
+        <h1 className='text-2xl font-bold mt-4 text-center'>{title}</h1>
+
+        {formType === 'book' && <BookUploadForm />}
+        {formType === 'map' && <MapUploadForm />}
+        {!formType && (
+          <div className='mt-8 text-center'>
+            <p className='text-lg'>Welcome to the admin dashboard.</p>
+            <p className='mt-2'>
+              Please select an option from the admin menu to get started.
+            </p>
+          </div>
+        )}
       </section>
     </>
   );
