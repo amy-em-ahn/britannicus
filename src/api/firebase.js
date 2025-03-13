@@ -112,3 +112,19 @@ export async function getProducts(category) {
     throw error;
   }
 }
+
+export async function getProductById(productId) {
+  try {
+    const snapshot = await get(ref(database, `products/${productId}`));
+
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      console.log('No product found with ID:', productId);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching product by ID:', error);
+    throw error;
+  }
+}
