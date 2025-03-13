@@ -10,7 +10,8 @@ const CommonProductFields = ({
   inputStyles,
   handleChange,
   categoryOptions,
-  isCategoryDisabled = false
+  isCategoryDisabled = false,
+  allowCustomOption = true
 }) => {
   return (
     <>
@@ -27,21 +28,22 @@ const CommonProductFields = ({
           onChange={handleChange}
           required
           disabled={isCategoryDisabled}
+          allowCustomOption={!isCategoryDisabled && allowCustomOption}
         >
           {categoryOptions}
         </CustomSelect>
       </div>
 
-      {/* Product Options */}
       <div className='sm:col-span-1'>
         <CustomSelect
           name='options'
           value={product.options}
           onChange={handleChange}
           required
+          allowCustomOption={allowCustomOption}
         >
           <option value='' disabled>
-            Select Seller
+            Seller type
           </option>
           <option value='Individual'>Individual</option>
           <option value='Auction'>Auction</option>
@@ -51,7 +53,6 @@ const CommonProductFields = ({
         </CustomSelect>
       </div>
 
-      {/* Title */}
       <div className='sm:col-span-2'>
         <input
           type='text'
@@ -96,6 +97,8 @@ const CommonProductFields = ({
           >
             <option value='USD'>USD</option>
             <option value='CAN'>CAN</option>
+            {allowCustomOption && <option value='EUR'>EUR</option>}
+            {allowCustomOption && <option value='GBP'>GBP</option>}
           </select>
           <div className='absolute inset-y-0 right-4 flex items-center pointer-events-none'>
             <svg
@@ -110,7 +113,6 @@ const CommonProductFields = ({
         </div>
       </div>
 
-      {/* Stock */}
       <div className='sm:col-span-1'>
         <div className='relative'>
           <input
@@ -126,17 +128,16 @@ const CommonProductFields = ({
         </div>
       </div>
 
-      {/* Condition */}
       <div className='sm:col-span-1'>
         <CustomSelect
           name='condition'
           value={product.condition}
           onChange={handleChange}
           required={product.category !== 'Vintage maps'}
+          allowCustomOption={allowCustomOption}
         >
           <option value='' disabled>
-            Select Condition{' '}
-            {product.category === 'Vintage maps' ? '(Optional)' : ''}
+            Condition (Optioanl)
           </option>
           {product.category === 'Vintage maps' ? (
             <>
@@ -159,7 +160,6 @@ const CommonProductFields = ({
         </CustomSelect>
       </div>
 
-      {/* Year */}
       <div className='sm:col-span-1'>
         <input
           type='text'
@@ -172,7 +172,6 @@ const CommonProductFields = ({
         />
       </div>
 
-      {/* Seller */}
       <div className='sm:col-span-1'>
         <input
           type='text'
@@ -185,7 +184,6 @@ const CommonProductFields = ({
         />
       </div>
 
-      {/* Location */}
       <div className='sm:col-span-1'>
         <input
           type='text'
