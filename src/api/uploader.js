@@ -26,7 +26,14 @@ export async function uploadImage(file) {
     const result = await response.json();
     console.log('Cloudinary success response:', result);
 
-    return result.secure_url || result.url;
+    const imageUrl = result.secure_url || result.url;
+    const optimizedUrl = imageUrl.replace(
+      '/upload/',
+      '/upload/w_auto,c_fill,q_auto,f_auto/'
+    );
+    console.log('Optimized image URL:', optimizedUrl);
+
+    return optimizedUrl;
   } catch (error) {
     console.error('Image upload error:', error);
     throw error;
