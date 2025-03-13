@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
 import { useAuthContext } from '../../components/context/AuthContext';
@@ -7,26 +7,12 @@ import { Navigate } from 'react-router-dom';
 
 export default function Login({ handleFunction, darkMode }) {
   const { user, login } = useAuthContext();
-
-  // google login
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  const handleGoogleLogin = () => {
-    setIsLoggingIn(true);
-    login().finally(() => {
-      setIsLoggingIn(false);
-    });
-  };
-
-  // end of google login
-
   let background = '';
   if (darkMode) {
     background = 'bg-slate-700';
   } else {
     background = 'bg-white';
   }
-
   return (
     <>
       <Helmet>
@@ -67,9 +53,8 @@ export default function Login({ handleFunction, darkMode }) {
         </h2>
         <Button
           icon={'FaGoogle'}
-          text={isLoggingIn ? 'Signing in...' : 'Sign in using Google'}
-          onClick={handleGoogleLogin} // google login
-          disabled={isLoggingIn}
+          text={'Sign in using Google'}
+          onClick={login}
         />
       </div>
       {user ? <Navigate to={'/'} /> : ''}

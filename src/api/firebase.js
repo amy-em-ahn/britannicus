@@ -9,23 +9,6 @@ import {
 } from 'firebase/auth';
 import { getDatabase, ref, get, set } from 'firebase/database';
 
-console.log('Firebase Environment Variables Check:', {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY ? 'Set' : 'Not Set',
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN ? 'Set' : 'Not Set',
-  databaseURL: process.env.REACT_APP_FIREBASE_DB_URL ? 'Set' : 'Not Set',
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID ? 'Set' : 'Not Set',
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET
-    ? 'Set'
-    : 'Not Set',
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
-    ? 'Set'
-    : 'Not Set',
-  appId: process.env.REACT_APP_FIREBASE_APP_ID ? 'Set' : 'Not Set',
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-    ? 'Set'
-    : 'Not Set'
-});
-
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -42,24 +25,11 @@ export const app = initializeApp(firebaseConfig);
 // Google Auth Provider
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
-// Add specific scopes and parameters to fix CORS issues
-provider.addScope('profile');
-provider.addScope('email');
-provider.setCustomParameters({
-  prompt: 'select_account'
-});
 const database = getDatabase(app);
 
-// login with improved error handling
+// login
 export function login() {
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      // Success - no need to do anything as onAuthStateChanged will handle it
-      return result.user;
-    })
-    .catch((error) => {
-      console.error('Google auth error:', error.code, error.message);
-    });
+  signInWithPopup(auth, provider).catch(console.error);
 }
 
 // logout
