@@ -1,12 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
 import { useAuthContext } from '../../components/context/AuthContext';
 import Input from '../../components/ui/Input';
-import { Navigate } from 'react-router-dom';
+import { getAuthRedirectResult } from '../../api/firebase';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Login({ handleFunction, darkMode }) {
   const { user, login } = useAuthContext();
+
+  // google redirect to home start
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getAuthRedirectResult();
+        if (result?.user) {
+          console.log('Google login success:', result.user);
+          const returnPath = localStorage.getItem('auth_return_path') || '/';
+          localStorage.removeItem('auth_return_path');
+          navigate(returnPath);
+        }
+      } catch (error) {
+        console.error('error:', error);
+      }
+    };
+
+    handleRedirectResult();
+  }, [navigate]);
+
+  const handleGoogleLogin = () => {
+    const returnPath = location.state?.from || '/';
+    localStorage.setItem('auth_return_path', returnPath);
+
+    login();
+  };
+
+  // google redirect to home end
+
   let background = '';
   if (darkMode) {
     background = 'bg-slate-700';
@@ -54,7 +87,7 @@ export default function Login({ handleFunction, darkMode }) {
         <Button
           icon={'FaGoogle'}
           text={'Sign in using Google'}
-          onClick={login}
+          onClick={handleGoogleLogin} // this part changed
         />
       </div>
       {user ? <Navigate to={'/'} /> : ''}
