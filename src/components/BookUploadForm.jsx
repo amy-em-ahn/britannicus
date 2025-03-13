@@ -4,7 +4,7 @@ import Button from '../components/ui/Button';
 import OutlineButton from '../components/ui/OutlineButton';
 import CustomSelect from './CustomSelect';
 import { uploadImage } from '../api/uploader';
-import { addNewProduct } from '../api/firebase';
+import { addNewProduct } from '../api/supabase';
 import { initialBookState } from '../config/productState';
 import CommonProductFields from './CommonProductFields';
 
@@ -79,15 +79,15 @@ const BookUploadForm = () => {
       <Helmet>
         <title>Add New Book | Britannicus BMS</title>
       </Helmet>
-      <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='bg-white shadow rounded-lg overflow-hidden'>
+      <div className='max-w-4xl px-4 py-8 mx-auto sm:px-6 lg:px-8'>
+        <div className='overflow-hidden bg-white rounded-lg shadow'>
           {success && (
-            <div className='m-4 p-4 text-sm text-green-700 bg-green-100 rounded-md'>
+            <div className='p-4 m-4 text-sm text-green-700 bg-green-100 rounded-md'>
               {success}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className='px-4 py-5 sm:p-6 space-y-6'>
+          <form onSubmit={handleSubmit} className='px-4 py-5 space-y-6 sm:p-6'>
             <div className='grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2'>
               {/* Common Fields */}
               <CommonProductFields

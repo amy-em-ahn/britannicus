@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '../api/firebase';
+import { getProducts } from '../api/supabase';
 import ProductCard from '../components/ProductCard';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,7 @@ const CategorySection = ({ products, category, title, endpoint }) => {
 
   return (
     <section className='w-full mb-12'>
-      <div className='flex justify-between items-center mb-4 px-4'>
+      <div className='flex items-center justify-between px-4 mb-4'>
         <h2 className='text-2xl font-bold'>{title}</h2>
         <Link
           to={`/products/${endpoint}`}
@@ -22,7 +22,7 @@ const CategorySection = ({ products, category, title, endpoint }) => {
         </Link>
       </div>
 
-      <ul className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4'>
+      <ul className='grid grid-cols-1 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
         {products.slice(0, 6).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { getProductById } from '../../api/firebase';
+import { getProductById } from '../../api/supabase';
 import { useParams } from 'react-router-dom';
 import { initialBookState } from '../../config/productState';
 
@@ -39,9 +39,9 @@ export default function ProductDetail() {
   }, [productId]);
 
   if (loading)
-    return <p className='text-center p-8'>Loading product details...</p>;
-  if (error) return <p className='text-center text-red-500 p-8'>{error}</p>;
-  if (!product) return <p className='text-center p-8'>Product not found</p>;
+    return <p className='p-8 text-center'>Loading product details...</p>;
+  if (error) return <p className='p-8 text-center text-red-500'>{error}</p>;
+  if (!product) return <p className='p-8 text-center'>Product not found</p>;
 
   const {
     title,
@@ -79,7 +79,7 @@ export default function ProductDetail() {
       <div className='w-full max-w-[1200px] mx-auto px-4 py-6'>
         <BreadcrumbNav category={category} title={title} />
 
-        <div className='grid grid-cols-1 md:grid-cols-12 gap-8'>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-12'>
           <div className='md:col-span-4'>
             <ProductImageCarousel images={images || image} />
           </div>
@@ -91,15 +91,15 @@ export default function ProductDetail() {
                   {categoryTitle}
                 </p>
               )}
-              {title && <h1 className='text-2xl font-bold mt-1'>{title}</h1>}
-              {author && <p className='text-lg mt-1'>by {author}</p>}
-              <div className='flex flex-wrap text-sm text-gray-600 mt-2'>
+              {title && <h1 className='mt-1 text-2xl font-bold'>{title}</h1>}
+              {author && <p className='mt-1 text-lg'>by {author}</p>}
+              <div className='flex flex-wrap mt-2 text-sm text-gray-600'>
                 {publishedby && (
                   <span className='mr-4'>Published by: {publishedby}</span>
                 )}
                 {year && <span className='mr-4'>Year: {year}</span>}
                 {condition && (
-                  <span className='px-2 py-1 bg-gray-100 rounded-md text-gray-800'>
+                  <span className='px-2 py-1 text-gray-800 bg-gray-100 rounded-md'>
                     {condition}
                   </span>
                 )}
@@ -109,7 +109,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className='border-t border-b py-4 my-4'>
+            <div className='py-4 my-4 border-t border-b'>
               <div className='grid grid-cols-2 gap-4'>
                 {options && (
                   <div>
@@ -138,7 +138,7 @@ export default function ProductDetail() {
               </div>
 
               {(seller || location) && (
-                <div className='mt-4 pt-4 border-t border-gray-100'>
+                <div className='pt-4 mt-4 border-t border-gray-100'>
                   <p className='text-sm text-gray-500'>Seller Information</p>
                   <div className='flex items-center mt-1'>
                     {seller && <p className='mr-2'>{seller}</p>}
@@ -155,8 +155,8 @@ export default function ProductDetail() {
         </div>
 
         {description && (
-          <div className='mt-12 border-t pt-6'>
-            <h2 className='text-xl font-bold mb-4'>Description</h2>
+          <div className='pt-6 mt-12 border-t'>
+            <h2 className='mb-4 text-xl font-bold'>Description</h2>
             <p className='whitespace-pre-line'>{description}</p>
           </div>
         )}
