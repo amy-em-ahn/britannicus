@@ -11,6 +11,10 @@
   font-style: normal;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: 'inter', 'Segoe UI', 'Roboto', 'Oxygen',
@@ -27,4 +31,15 @@ code {
 
 input {
   @apply p-2 outline-none border border-gray-300 my-1
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

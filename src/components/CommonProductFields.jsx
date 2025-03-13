@@ -133,30 +133,19 @@ const CommonProductFields = ({
           name='condition'
           value={product.condition}
           onChange={handleChange}
-          required={product.category !== 'Vintage maps'}
-          allowCustomOption={allowCustomOption}
+          required={product.category !== 'maps'}
+          allowCustomOption={false}
         >
           <option value='' disabled>
-            Condition (Optioanl)
+            Condition (Optional)
           </option>
-          {product.category === 'Vintage maps' ? (
-            <>
-              <option value='Excellent'>Excellent</option>
-              <option value='Very Good'>Very Good</option>
-              <option value='Good'>Good</option>
-              <option value='Fair'>Fair</option>
-              <option value='Poor'>Poor</option>
-            </>
-          ) : (
-            <>
-              <option value='New'>New</option>
-              <option value='Like New'>Like New</option>
-              <option value='Very Good'>Very Good</option>
-              <option value='Good'>Good</option>
-              <option value='Fair'>Fair</option>
-              <option value='Poor'>Poor</option>
-            </>
-          )}
+          <>
+            <option value='Mint'>Mint</option>
+            <option value='Excellent'>Excellent</option>
+            <option value='Good'>Good</option>
+            <option value='Fair'>Fair</option>
+            <option value='Poor'>Poor</option>
+          </>
         </CustomSelect>
       </div>
 

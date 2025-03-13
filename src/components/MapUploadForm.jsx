@@ -74,7 +74,7 @@ const MapUploadForm = () => {
   const inputStyles =
     'block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
 
-  const categoryOptions = <option value='Vintage maps'>Vintage Maps</option>;
+  const categoryOptions = <option value='maps'>Vintage Maps</option>;
 
   return (
     <>
