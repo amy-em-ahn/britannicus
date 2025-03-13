@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Button from './ui/Button';
+import Button from '../components/ui/Button';
+import OutlineButton from '../components/ui/OutlineButton';
 import CustomSelect from './CustomSelect';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
@@ -97,6 +98,7 @@ const BookUploadForm = () => {
                 inputStyles={inputStyles}
                 handleChange={handleChange}
                 categoryOptions={categoryOptions}
+                allowCustomOption={true}
               />
 
               {/* Book-specific Fields */}
@@ -106,9 +108,10 @@ const BookUploadForm = () => {
                   value={product.genre}
                   onChange={handleChange}
                   required
+                  allowCustomOption={true}
                 >
                   <option value='' disabled>
-                    Select Genre
+                    Genre
                   </option>
                   <option value='Fiction'>Fiction</option>
                   <option value='Non-Fiction'>Non-Fiction</option>
@@ -129,9 +132,10 @@ const BookUploadForm = () => {
                   value={product.format}
                   onChange={handleChange}
                   required
+                  allowCustomOption={true}
                 >
                   <option value='' disabled>
-                    Select Format
+                    Format
                   </option>
                   <option value='Hardcover'>Hardcover</option>
                   <option value='Paperback'>Paperback</option>
@@ -149,9 +153,10 @@ const BookUploadForm = () => {
                   value={product.language}
                   onChange={handleChange}
                   required
+                  allowCustomOption={true}
                 >
                   <option value='' disabled>
-                    Select Language
+                    Language
                   </option>
                   <option value='English'>English</option>
                   <option value='French'>French</option>
@@ -193,7 +198,11 @@ const BookUploadForm = () => {
 
             <div className='pt-5'>
               <div className='flex justify-center gap-3'>
-                <Button type='button' text='Cancel' disabled={isUploading} />
+                <OutlineButton
+                  type='button'
+                  text='Cancel'
+                  disabled={isUploading}
+                />
                 <Button
                   text={isUploading ? 'Uploading...' : 'Add Book'}
                   disabled={isUploading}

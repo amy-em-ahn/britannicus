@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Button from './ui/Button';
+import Button from '../components/ui/Button';
+import OutlineButton from '../components/ui/OutlineButton';
 import CustomSelect from './CustomSelect';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
@@ -8,7 +9,12 @@ import { initialMapState } from '../config/productState';
 import CommonProductFields from './CommonProductFields';
 
 const MapUploadForm = () => {
-  const [product, setProduct] = useState(initialMapState);
+  const initialState = {
+    ...initialMapState,
+    category: 'Vintage maps'
+  };
+
+  const [product, setProduct] = useState(initialState);
   const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -28,12 +34,18 @@ const MapUploadForm = () => {
       return;
     }
 
+    // Ensure category is set before submitting
+    const submittingProduct = {
+      ...product,
+      category: product.category || 'Vintage maps'
+    };
+
     const imageFile = images[0].file;
 
     uploadImage(imageFile)
       .then((url) => {
         const productWithUnit = {
-          ...product,
+          ...submittingProduct,
           stockUnit: 'PCS'
         };
         return addNewProduct(productWithUnit, url);
@@ -42,7 +54,7 @@ const MapUploadForm = () => {
         setSuccess('Map successfully added!');
 
         setTimeout(() => {
-          setProduct(initialMapState);
+          setProduct(initialState);
           setImages([]);
         }, 500);
 
@@ -97,11 +109,12 @@ const MapUploadForm = () => {
                   name='color'
                   value={product.color}
                   onChange={handleChange}
+                  allowCustomOption={true}
                 >
                   <option value='' disabled>
-                    Select Color (Optional)
+                    Color (Optional)
                   </option>
-                  <option value='Full Color'>Full Color</option>
+                  <option value='Full Color'>Original Color</option>
                   <option value='Black & White'>Black & White</option>
                   <option value='Sepia'>Sepia</option>
                   <option value='Hand Colored'>Hand Colored</option>
@@ -115,9 +128,10 @@ const MapUploadForm = () => {
                   name='size'
                   value={product.size}
                   onChange={handleChange}
+                  allowCustomOption={true}
                 >
                   <option value='' disabled>
-                    Select Size (Optional)
+                    Size (Optional)
                   </option>
                   <option value='Small (Up to 8x10")'>
                     Small (Up to 8x10")
@@ -152,7 +166,11 @@ const MapUploadForm = () => {
 
             <div className='pt-5'>
               <div className='flex justify-center gap-3'>
-                <Button type='button' text='Cancel' disabled={isUploading} />
+                <OutlineButton
+                  type='button'
+                  text='Cancel'
+                  disabled={isUploading}
+                />
                 <Button
                   text={isUploading ? 'Uploading...' : 'Add Map'}
                   disabled={isUploading}
