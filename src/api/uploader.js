@@ -1,28 +1,34 @@
-// export async function uploadImage(file) {
-//   const data = new FormData();
-//   data.append('file', file);
-//   data.append('upload_preset', process.env.REACT_APP_CLOUDINARY_PRESET);
-
-//   return fetch(process.env.REACT_APP_CLOUDINARY_URL, {
-//     method: 'POST',
-//     body: data
-//   })
-//     .then((res) => res.json())
-//     .then((data) => data.url);
-// }
+console.log('Cloudinary Environment Variables Check:', {
+  preset: process.env.REACT_APP_CLOUDINARY_PRESET ? 'Set' : 'Not Set',
+  url: process.env.REACT_APP_CLOUDINARY_URL ? 'Set' : 'Not Set'
+});
 
 export async function uploadImage(file) {
   const data = new FormData();
   data.append('file', file);
-  data.append('upload_preset', 'britannicus');
+  data.append('upload_preset', process.env.REACT_APP_CLOUDINARY_PRESET);
 
-  return fetch('https://api.cloudinary.com/v1_1/doiqoi3of/image/upload', {
-    method: 'POST',
-    body: data
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log('Cloudinary response:', data);
-      return data.secure_url;
+  try {
+    console.log('Uploading image to Cloudinary...');
+    const response = await fetch(process.env.REACT_APP_CLOUDINARY_URL, {
+      method: 'POST',
+      body: data
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Cloudinary error response:', errorText);
+      throw new Error(
+        `Upload failed: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const result = await response.json();
+    console.log('Cloudinary success response:', result);
+
+    return result.secure_url || result.url;
+  } catch (error) {
+    console.error('Image upload error:', error);
+    throw error;
+  }
 }

@@ -9,6 +9,23 @@ import {
 } from 'firebase/auth';
 import { getDatabase, ref, get, set } from 'firebase/database';
 
+console.log('Firebase Environment Variables Check:', {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY ? 'Set' : 'Not Set',
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN ? 'Set' : 'Not Set',
+  databaseURL: process.env.REACT_APP_FIREBASE_DB_URL ? 'Set' : 'Not Set',
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID ? 'Set' : 'Not Set',
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET
+    ? 'Set'
+    : 'Not Set',
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+    ? 'Set'
+    : 'Not Set',
+  appId: process.env.REACT_APP_FIREBASE_APP_ID ? 'Set' : 'Not Set',
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+    ? 'Set'
+    : 'Not Set'
+});
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -78,16 +95,37 @@ export async function addNewProduct(product, imageUrl) {
 
 // get products
 export async function getProducts(category) {
-  return get(ref(database, 'products')).then((snapshot) => {
+  console.log('Fetching products with category:', category);
+  try {
+    const snapshot = await get(ref(database, 'products'));
+    console.log(
+      'Database response:',
+      snapshot.exists() ? 'Data exists' : 'No data'
+    );
+
     if (snapshot.exists()) {
       const products = Object.values(snapshot.val());
+      console.log('Total products found:', products.length);
 
       if (category) {
-        return products.filter((product) => product.category === category);
+        const filtered = products.filter(
+          (product) => product.category === category
+        );
+        console.log(
+          'Filtered products for category',
+          category,
+          ':',
+          filtered.length
+        );
+        return filtered;
       }
 
       return products;
     }
+    console.log('No products found in database');
     return [];
-  });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
+  }
 }
