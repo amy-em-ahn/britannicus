@@ -1,5 +1,5 @@
 import React from 'react';
-import { initialProductState } from '../config/productState';
+import { initialBookState } from '../config/productState';
 import Rating from '../components/ui/Rating';
 import Button from '../components/ui/Button';
 import { FaRegHeart } from 'react-icons/fa';
@@ -19,7 +19,7 @@ export default function ProductCard({
     location,
     description,
     views
-  } = initialProductState
+  } = initialBookState
 }) {
   const truncatedTitle = title.length > 15 ? `${title.slice(0, 15)}...` : title;
 
