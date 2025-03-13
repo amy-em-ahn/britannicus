@@ -11,24 +11,19 @@ export default function Products() {
 
   let category = '';
   let title = 'All Products';
-  let endpoint = null;
 
   if (currentPath.includes('rare-books')) {
     category = 'rare-books';
     title = 'Rare Books';
-    endpoint = 'products/rare-book';
   } else if (currentPath.includes('maps')) {
     category = 'maps';
     title = 'Vintage Maps';
-    endpoint = 'products/maps';
   } else if (currentPath.includes('periodicals')) {
     category = 'periodicals';
     title = 'Periodicals';
-    endpoint = 'products/periodicals';
   } else if (currentPath.includes('first-editions')) {
     category = 'first-editions';
     title = 'First Editions';
-    endpoint = 'products/first-editions';
   }
 
   const {
