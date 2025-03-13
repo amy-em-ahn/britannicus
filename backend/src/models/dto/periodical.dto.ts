@@ -7,12 +7,16 @@ export interface CreatePeriodicalDto {
     genre: string[],
     condition: Condition,
     isbn?: string,
-    language: string,
+    language?: string,
     price: number,
-    publisher: string,
-    pubDate: Date,
+    publisher?: string,
+    pubDate?: Date,
     saleOptions: SaleOptions,
     imageUrl: string,
+    currency?: string,
+    seller?: string,
+    location?: string,
+    description?: string
 }
 
 export interface PeriodicalDto extends CreatePeriodicalDto{

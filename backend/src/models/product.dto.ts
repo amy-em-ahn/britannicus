@@ -15,10 +15,10 @@ export interface BaseProductDto {
     description?: string;
     imageUrl: string;
     saleOptions: SaleOptions;
-    publishedBy?: string; // Standardized field from "publisher" or "publishedby"
-    pubDate?: Date | string; // Some data uses "year" instead
+    publishedBy?: string; 
+    pubDate?: Date | string;
     createdAt?: Date | string;
-    stock?: number | string; // Some data uses "stockUnit" as well
+    stock?: number | string; 
 }
 
 export interface BookDto extends BaseProductDto {

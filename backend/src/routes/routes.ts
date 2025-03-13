@@ -7,8 +7,9 @@ import * as adminController from "../controllers/adminController";
 const router = express.Router();
 
 
+//router.get("/products", productController.getAllProducts);
+router.get("/products", productController.getProducts);
 
-router.get("/products", productController.getAllProducts);
 router.get("/products/featured", productController.getFeatured);
 router.get("/products/first-editions", productController.getFirstEditions);
 router.get("/products/rare-books", productController.getRareBooks);
@@ -33,7 +34,6 @@ router.delete("/admin/maps/:id", adminController.deleteMap);
 router.post("auth/register");
 router.post("auth/login");
 router.get("auth/me");
-
 
 
 export default router;
