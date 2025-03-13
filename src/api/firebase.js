@@ -42,18 +42,23 @@ export const app = initializeApp(firebaseConfig);
 // Google Auth Provider
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
+// Add specific scopes and parameters to fix CORS issues
+provider.addScope('profile');
+provider.addScope('email');
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 const database = getDatabase(app);
 
-// login
+// login with improved error handling
 export function login() {
   return signInWithPopup(auth, provider)
     .then((result) => {
-      console.log('Login successful:', result.user);
+      // Success - no need to do anything as onAuthStateChanged will handle it
       return result.user;
     })
     .catch((error) => {
-      console.error('Login error:', error);
-      throw error;
+      console.error('Google auth error:', error.code, error.message);
     });
 }
 

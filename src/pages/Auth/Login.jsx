@@ -1,35 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
 import { useAuthContext } from '../../components/context/AuthContext';
 import Input from '../../components/ui/Input';
-import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export default function Login({ handleFunction, darkMode }) {
   const { user, login } = useAuthContext();
 
-  // Google Login start
-  const navigate = useNavigate();
-  const location = useLocation();
+  // google login
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleGoogleLogin = () => {
-    const returnPath = location.state?.from || '/';
-
-    login()
-      .then(() => {
-        console.log('Login successful, navigating to:', returnPath);
-        navigate(returnPath);
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-      });
+    setIsLoggingIn(true);
+    login().finally(() => {
+      setIsLoggingIn(false);
+    });
   };
 
-  if (user) {
-    return <Navigate to='/' />;
-  }
-
-  // Google Login end
+  // end of google login
 
   let background = '';
   if (darkMode) {
@@ -78,10 +67,12 @@ export default function Login({ handleFunction, darkMode }) {
         </h2>
         <Button
           icon={'FaGoogle'}
-          text={'Sign in using Google'}
-          onClick={handleGoogleLogin}
+          text={isLoggingIn ? 'Signing in...' : 'Sign in using Google'}
+          onClick={handleGoogleLogin} // google login
+          disabled={isLoggingIn}
         />
       </div>
+      {user ? <Navigate to={'/'} /> : ''}
     </>
   );
 }
