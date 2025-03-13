@@ -4,23 +4,29 @@ import * as productService from "../services/productService";
 
 export const getProducts = async (req: Request, res: Response) => {
     try {
-        const { type, search, minPrice, maxPrice, condition, saleOptions, genre, format, projection, dimensions, seller, stock, language, category, } = req.query;
+        const { 
+          type, 
+          search, /*minPrice, maxPrice, */
+          condition, 
+          saleOptions, /*genre, format, projection, dimensions, seller, */
+          stock, /*language,*/ 
+          category, } = req.query;
 
         const types = Array.isArray(type) ? (type as string[]) : type ? [type as string] : ["books", "maps", "periodicals"];
 
         const filters = {
             search: search as string | undefined,
-            minPrice: minPrice ? Number(minPrice) : undefined,
-            maxPrice: maxPrice ? Number(maxPrice) : undefined,
+            // minPrice: minPrice ? Number(minPrice) : undefined,
+            //maxPrice: maxPrice ? Number(maxPrice) : undefined,
             condition: condition as string | undefined,
             saleOptions: saleOptions as string | undefined,
-            genre: genre as string | undefined,
-            format: format as string | undefined,
-            projection: projection as string | undefined,
-            dimensions: dimensions as string | undefined,
-            seller: seller as string | undefined,
+            // genre: genre as string | undefined,
+            // format: format as string | undefined,
+            // projection: projection as string | undefined,
+            // dimensions: dimensions as string | undefined,
+            // seller: seller as string | undefined,
             stock: stock as number | undefined,
-            language: language as string |undefined,
+            // language: language as string |undefined,
             category: category as string | undefined,
         };
 

@@ -7,7 +7,6 @@ import * as adminController from "../controllers/adminController";
 const router = express.Router();
 
 
-
 //router.get("/products", productController.getAllProducts);
 router.get("/products", productController.getProducts);
 
@@ -35,7 +34,6 @@ router.delete("/admin/maps/:id", adminController.deleteMap);
 router.post("auth/register");
 router.post("auth/login");
 router.get("auth/me");
-
 
 
 export default router;
