@@ -4,11 +4,11 @@ import Button from './ui/Button';
 import CustomSelect from './CustomSelect';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
-import { initialBookState } from '../config/productState';
+import { initialMapState } from '../config/productState';
 import CommonProductFields from './CommonProductFields';
 
-const BookUploadForm = () => {
-  const [product, setProduct] = useState(initialBookState);
+const MapUploadForm = () => {
+  const [product, setProduct] = useState(initialMapState);
   const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -39,10 +39,10 @@ const BookUploadForm = () => {
         return addNewProduct(productWithUnit, url);
       })
       .then(() => {
-        setSuccess('Book successfully added!');
+        setSuccess('Map successfully added!');
 
         setTimeout(() => {
-          setProduct(initialBookState);
+          setProduct(initialMapState);
           setImages([]);
         }, 500);
 
@@ -62,21 +62,12 @@ const BookUploadForm = () => {
   const inputStyles =
     'block w-full rounded-md border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
 
-  const categoryOptions = (
-    <>
-      <option value='' disabled>
-        Select Product Category
-      </option>
-      <option value='Rare Books'>Rare Books</option>
-      <option value='Periodicals'>Periodicals</option>
-      <option value='First Editions'>First Editions</option>
-    </>
-  );
+  const categoryOptions = <option value='Vintage maps'>Vintage Maps</option>;
 
   return (
     <>
       <Helmet>
-        <title>Add New Book | Britannicus BMS</title>
+        <title>Add New Map | Britannicus BMS</title>
       </Helmet>
       <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         <div className='bg-white shadow rounded-lg overflow-hidden'>
@@ -97,83 +88,52 @@ const BookUploadForm = () => {
                 inputStyles={inputStyles}
                 handleChange={handleChange}
                 categoryOptions={categoryOptions}
+                isCategoryDisabled={true}
               />
 
-              {/* Book-specific Fields */}
+              {/* Map-specific Fields */}
               <div className='sm:col-span-1'>
                 <CustomSelect
-                  name='genre'
-                  value={product.genre}
+                  name='color'
+                  value={product.color}
                   onChange={handleChange}
-                  required
                 >
                   <option value='' disabled>
-                    Select Genre
+                    Select Color (Optional)
                   </option>
-                  <option value='Fiction'>Fiction</option>
-                  <option value='Non-Fiction'>Non-Fiction</option>
-                  <option value='History'>History</option>
-                  <option value='Science'>Science</option>
-                  <option value='Literature'>Literature</option>
-                  <option value='Philosophy'>Philosophy</option>
-                  <option value='Biography'>Biography</option>
-                  <option value='Art'>Art</option>
-                  <option value='Travel'>Travel</option>
-                  <option value='Other'>Other</option>
+                  <option value='Full Color'>Full Color</option>
+                  <option value='Black & White'>Black & White</option>
+                  <option value='Sepia'>Sepia</option>
+                  <option value='Hand Colored'>Hand Colored</option>
+                  <option value='Lithograph'>Lithograph</option>
+                  <option value='Woodcut'>Woodcut</option>
                 </CustomSelect>
               </div>
 
               <div className='sm:col-span-1'>
                 <CustomSelect
-                  name='format'
-                  value={product.format}
+                  name='size'
+                  value={product.size}
                   onChange={handleChange}
-                  required
                 >
                   <option value='' disabled>
-                    Select Format
+                    Select Size (Optional)
                   </option>
-                  <option value='Hardcover'>Hardcover</option>
-                  <option value='Paperback'>Paperback</option>
-                  <option value='Leather Bound'>Leather Bound</option>
-                  <option value='Special Edition'>Special Edition</option>
-                  <option value='Illustrated'>Illustrated</option>
-                  <option value='Folio'>Folio</option>
-                  <option value='Manuscript'>Manuscript</option>
-                </CustomSelect>
-              </div>
-
-              <div className='sm:col-span-1'>
-                <CustomSelect
-                  name='language'
-                  value={product.language}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value='' disabled>
-                    Select Language
+                  <option value='Small (Up to 8x10")'>
+                    Small (Up to 8x10")
                   </option>
-                  <option value='English'>English</option>
-                  <option value='French'>French</option>
-                  <option value='German'>German</option>
-                  <option value='Italian'>Italian</option>
-                  <option value='Spanish'>Spanish</option>
-                  <option value='Latin'>Latin</option>
-                  <option value='Greek'>Greek</option>
-                  <option value='Other'>Other</option>
+                  <option value='Medium (11x14" to 16x20")'>
+                    Medium (11x14" to 16x20")
+                  </option>
+                  <option value='Large (17x22" to 24x36")'>
+                    Large (17x22" to 24x36")
+                  </option>
+                  <option value='Extra Large (Larger than 24x36")'>
+                    Extra Large (Larger than 24x36")
+                  </option>
+                  <option value='Folding Map'>Folding Map</option>
+                  <option value='Atlas Page'>Atlas Page</option>
                 </CustomSelect>
-              </div>
-
-              <div className='sm:col-span-1'>
-                <input
-                  type='text'
-                  name='publishedby'
-                  id='publishedby'
-                  value={product.publishedby}
-                  onChange={handleChange}
-                  placeholder='Published by (Optional)'
-                  className={inputStyles}
-                />
               </div>
 
               {/* Description at the bottom */}
@@ -184,8 +144,7 @@ const BookUploadForm = () => {
                   value={product.description}
                   onChange={handleChange}
                   rows='4'
-                  placeholder='Book description'
-                  required
+                  placeholder='Map description (Optional)'
                   className={inputStyles}
                 />
               </div>
@@ -195,7 +154,7 @@ const BookUploadForm = () => {
               <div className='flex justify-center gap-3'>
                 <Button type='button' text='Cancel' disabled={isUploading} />
                 <Button
-                  text={isUploading ? 'Uploading...' : 'Add Book'}
+                  text={isUploading ? 'Uploading...' : 'Add Map'}
                   disabled={isUploading}
                   type='submit'
                 />
@@ -208,4 +167,4 @@ const BookUploadForm = () => {
   );
 };
 
-export default BookUploadForm;
+export default MapUploadForm;
