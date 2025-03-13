@@ -35,7 +35,7 @@ export default function Products() {
     isLoading,
     error,
     data: products
-  } = useQuery([`products-${category || 'all'}`], () => getProducts(endpoint));
+  } = useQuery([`products-${category || 'all'}`], () => getProducts(category));
 
   return (
     <>
@@ -43,7 +43,7 @@ export default function Products() {
         <title>{title} | Britannicus BMS</title>
       </Helmet>
 
-      <section className='w-full'>
+      <section className='w-full max-w-[1200px] mx-auto'>
         <h1 className='text-2xl font-bold mt-4 mb-6 text-center'>{title}</h1>
 
         {isLoading && <p className='text-center'>Loading...</p>}
@@ -51,7 +51,7 @@ export default function Products() {
           <p className='text-center text-red-500'>Error: {error.message}</p>
         )}
 
-        <ul className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4'>
+        <ul className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4'>
           {products &&
             products.map((product) => (
               <ProductCard key={product.id} product={product} />

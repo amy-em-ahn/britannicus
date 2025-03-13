@@ -21,43 +21,58 @@ export default function ProductCard({
     views
   } = initialBookState
 }) {
-  const truncatedTitle = title.length > 15 ? `${title.slice(0, 15)}...` : title;
+  const truncatedTitle = title.length > 18 ? `${title.slice(0, 18)}..` : title;
+
+  const formatPrice = (value) => {
+    if (!value && value !== 0) return '0.00';
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    return numValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
 
   return (
-    <li className='overflow-hidden p-3'>
-      <img
-        src={image}
-        className='w-[125px] h-[170px] object-cover rounded-md cursor-pointer'
-        alt={title}
-      />
+    <li className='overflow-hidden p-3 flex flex-col'>
+      <div className='w-full'>
+        <div className='aspect-[3/4] w-full overflow-hidden rounded-md'>
+          <img
+            src={image}
+            className='w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer'
+            alt={title}
+          />
+        </div>
+      </div>
 
-      <div className='mt-3 px-2 text-md'>
-        <p className='bg-gray-200 text-gray-700 text-xs font-semibold rounded-md px-2 py-1 inline-block'>
-          {options}
-        </p>
-
-        <h3 className='font-bold text-lg mt-1'>{truncatedTitle}</h3>
-
-        <p className='text-md font-bold mt-1'>
-          Price:{' '}
-          <span className='text-black'>
-            {currency} {price}
-          </span>
-        </p>
-
-        <div className='flex items-center justify-between mt-2'>
-          <Rating rating={5} />
-          <div className='flex items-center gap-1 text-gray-500 text-sm'>
-            <FaRegHeart className='text-xl cursor-pointer' />
-            {views}
+      <div className='mt-3 px-2 text-md flex flex-col flex-grow justify-between'>
+        <div className='flex flex-col'>
+          <div className='flex'>
+            <p className='bg-gray-200 text-gray-700 text-xs font-semibold rounded-md px-2 py-1 inline-block w-auto'>
+              {options}
+            </p>
           </div>
+
+          <h3 className='font-bold text-md mt-1 line-clamp-2 min-h-[2.5rem]'>
+            {truncatedTitle}
+          </h3>
+
+          <p className='text-sm mt-1 min-h-[1.5rem]'>
+            Price: <span className='text-black'>${formatPrice(price)}</span>
+          </p>
         </div>
 
-        <Button
-          text='Add cart'
-          icon='FaShoppingCart'
-          className='w-full bg-gray-700 text-white mt-2'
-        />
+        <div className='mt-auto flex flex-col'>
+          <div className='flex items-center justify-between mt-2'>
+            <Rating rating={5} />
+            <div className='flex items-center gap-1 text-gray-500 text-sm'>
+              <FaRegHeart className='text-xl cursor-pointer' />
+              {views}
+            </div>
+          </div>
+
+          <Button
+            text='Add cart'
+            icon='FaShoppingCart'
+            className='w-full bg-gray-700 text-white mt-2'
+          />
+        </div>
       </div>
     </li>
   );
