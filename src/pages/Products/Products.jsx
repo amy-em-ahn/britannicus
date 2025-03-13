@@ -22,9 +22,9 @@ export default function Products() {
     title = 'Vintage Maps';
     endpoint = 'products/maps';
   } else if (currentPath.includes('periodicals')) {
-    category = 'products/periodicals';
+    category = 'periodicals';
     title = 'Periodicals';
-    endpoint = 'periodicals';
+    endpoint = 'products/periodicals';
   } else if (currentPath.includes('first-editions')) {
     category = 'first-editions';
     title = 'First Editions';
