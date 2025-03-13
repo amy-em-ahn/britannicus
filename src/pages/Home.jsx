@@ -37,21 +37,21 @@ export default function Home() {
     error: errorRareBooks,
     data: rareBooks
   } = useQuery(['products-rare-books-preview'], () =>
-    getProducts('products/rare-book')
+    getProducts('rare-books')
   );
 
   const {
     isLoading: loadingMaps,
     error: errorMaps,
     data: maps
-  } = useQuery(['products-maps-preview'], () => getProducts('products/maps'));
+  } = useQuery(['products-maps-preview'], () => getProducts('maps'));
 
   const {
     isLoading: loadingPeriodicals,
     error: errorPeriodicals,
     data: periodicals
   } = useQuery(['products-periodicals-preview'], () =>
-    getProducts('products/periodicals')
+    getProducts('periodicals')
   );
 
   const {
@@ -59,7 +59,7 @@ export default function Home() {
     error: errorFirstEditions,
     data: firstEditions
   } = useQuery(['products-first-editions-preview'], () =>
-    getProducts('products/first-editions')
+    getProducts('first-editions')
   );
 
   return (
