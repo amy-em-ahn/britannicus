@@ -1,44 +1,35 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
 import { useAuthContext } from '../../components/context/AuthContext';
 import Input from '../../components/ui/Input';
-import { getAuthRedirectResult } from '../../api/firebase';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Login({ handleFunction, darkMode }) {
   const { user, login } = useAuthContext();
 
-  // google redirect to home start
+  // Google Login start
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        const result = await getAuthRedirectResult();
-        if (result?.user) {
-          console.log('Google login success:', result.user);
-          const returnPath = localStorage.getItem('auth_return_path') || '/';
-          localStorage.removeItem('auth_return_path');
-          navigate(returnPath);
-        }
-      } catch (error) {
-        console.error('error:', error);
-      }
-    };
-
-    handleRedirectResult();
-  }, [navigate]);
-
   const handleGoogleLogin = () => {
     const returnPath = location.state?.from || '/';
-    localStorage.setItem('auth_return_path', returnPath);
 
-    login();
+    login()
+      .then(() => {
+        console.log('Login successful, navigating to:', returnPath);
+        navigate(returnPath);
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+      });
   };
 
-  // google redirect to home end
+  if (user) {
+    return <Navigate to='/' />;
+  }
+
+  // Google Login end
 
   let background = '';
   if (darkMode) {
@@ -46,6 +37,7 @@ export default function Login({ handleFunction, darkMode }) {
   } else {
     background = 'bg-white';
   }
+
   return (
     <>
       <Helmet>
@@ -87,10 +79,9 @@ export default function Login({ handleFunction, darkMode }) {
         <Button
           icon={'FaGoogle'}
           text={'Sign in using Google'}
-          onClick={handleGoogleLogin} // this part changed
+          onClick={handleGoogleLogin}
         />
       </div>
-      {user ? <Navigate to={'/'} /> : ''}
     </>
   );
 }

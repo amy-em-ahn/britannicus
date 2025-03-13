@@ -2,8 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { v4 as uuid } from 'uuid';
 import {
   getAuth,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged
@@ -47,16 +46,15 @@ const database = getDatabase(app);
 
 // login
 export function login() {
-  signInWithRedirect(auth, provider).catch(console.error);
-}
-
-export async function getAuthRedirectResult() {
-  try {
-    return await getRedirectResult(auth);
-  } catch (error) {
-    console.error('redirection:', error);
-    return null;
-  }
+  return signInWithPopup(auth, provider)
+    .then((result) => {
+      console.log('Login successful:', result.user);
+      return result.user;
+    })
+    .catch((error) => {
+      console.error('Login error:', error);
+      throw error;
+    });
 }
 
 // logout
