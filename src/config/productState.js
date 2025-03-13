@@ -1,17 +1,19 @@
 export const initialBookState = {
+  id: '',
   image: '',
   category: '',
   options: '',
   title: '',
+  author: '',
+  publishedby: '',
+  year: '',
+  genre: '',
+  format: '',
+  language: '',
   price: '',
   currency: 'USD',
   stock: '',
   condition: '',
-  genre: '',
-  format: '',
-  language: '',
-  publishedby: '',
-  year: '',
   seller: '',
   location: '',
   description: '',
@@ -19,6 +21,7 @@ export const initialBookState = {
 };
 
 export const initialMapState = {
+  id: '',
   image: '',
   category: 'maps',
   options: '',
