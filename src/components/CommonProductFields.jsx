@@ -1,6 +1,6 @@
 import React from 'react';
 import ImageUploader from './ImageUploader';
-import CustomSelect from './CustomSelect';
+import CustomSelect from './Select/CustomSelect';
 
 const CommonProductFields = ({
   product,

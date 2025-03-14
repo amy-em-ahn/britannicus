@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../components/ui/Button';
 import OutlineButton from '../components/ui/OutlineButton';
-import CustomSelect from './CustomSelect';
+import CustomSelect from './Select/CustomSelect';
+import ModifiableSelect from './Select/ModifiableSelect';
 import { uploadImage } from '../api/uploader';
 import { addNewProduct } from '../api/firebase';
 import { initialBookState } from '../config/productState';
@@ -29,15 +30,16 @@ const BookUploadForm = () => {
       return;
     }
 
-    const imageFile = images[0].file;
+    const uploadPromises = images.map((image) => uploadImage(image.file));
 
-    uploadImage(imageFile)
-      .then((url) => {
+    Promise.all(uploadPromises)
+      .then((urls) => {
+        console.log('All images uploaded successfully:', urls);
         const productWithUnit = {
           ...product,
           stockUnit: 'PCS'
         };
-        return addNewProduct(productWithUnit, url);
+        return addNewProduct(productWithUnit, urls);
       })
       .then(() => {
         setSuccess('Book successfully added!');
@@ -98,12 +100,12 @@ const BookUploadForm = () => {
                 inputStyles={inputStyles}
                 handleChange={handleChange}
                 categoryOptions={categoryOptions}
-                allowCustomOption={true}
+                allowCustomOption={false}
               />
 
               {/* Book-specific Fields */}
               <div className='sm:col-span-1'>
-                <CustomSelect
+                <ModifiableSelect
                   name='genre'
                   value={product.genre}
                   onChange={handleChange}
@@ -123,7 +125,7 @@ const BookUploadForm = () => {
                   <option value='Art'>Art</option>
                   <option value='Travel'>Travel</option>
                   <option value='Other'>Other</option>
-                </CustomSelect>
+                </ModifiableSelect>
               </div>
 
               <div className='sm:col-span-1'>

@@ -17,7 +17,10 @@ export const initialBookState = {
   seller: '',
   location: '',
   description: '',
-  views: ''
+  views: '',
+  genres: [],
+  formats: [],
+  languages: []
 };
 
 export const initialMapState = {
@@ -36,5 +39,7 @@ export const initialMapState = {
   seller: '',
   location: '',
   description: '',
-  views: ''
+  views: '',
+  colors: [],
+  sizes: []
 };

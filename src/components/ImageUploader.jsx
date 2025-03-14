@@ -1,8 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 const ImageUploader = ({ images, setImages }) => {
   const fileInputRef = useRef(null);
   const dropAreaRef = useRef(null);
+  const [error, setError] = useState('');
+
+  const MAX_IMAGES = 6;
 
   const handleFileChange = (e) => {
     const selectedFiles = e.target.files;
@@ -12,11 +15,31 @@ const ImageUploader = ({ images, setImages }) => {
   };
 
   const addFiles = (files) => {
-    const newFiles = [...files].map((file) => ({
+    if (images.length >= MAX_IMAGES) {
+      setError(`Maximum of ${MAX_IMAGES} images allowed.`);
+      return;
+    }
+
+    // Calculate how many more images can be added
+    const remainingSlots = MAX_IMAGES - images.length;
+    const filesToAdd = Array.from(files).slice(0, remainingSlots);
+
+    if (files.length > remainingSlots) {
+      setError(
+        `Only ${remainingSlots} more image${
+          remainingSlots === 1 ? '' : 's'
+        } can be added.`
+      );
+    } else {
+      setError('');
+    }
+
+    const newFiles = filesToAdd.map((file) => ({
       file,
       id: Math.random().toString(36).substr(2, 9),
       preview: URL.createObjectURL(file)
     }));
+
     setImages((prev) => [...prev, ...newFiles]);
   };
 
@@ -28,13 +51,16 @@ const ImageUploader = ({ images, setImages }) => {
       if (removedImage) {
         URL.revokeObjectURL(removedImage.preview);
       }
+      setError('');
       return updatedImages;
     });
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    dropAreaRef.current.classList.add('border-blue-500');
+    if (images.length < MAX_IMAGES) {
+      dropAreaRef.current.classList.add('border-blue-500');
+    }
   };
 
   const handleDragLeave = () => {
@@ -50,12 +76,25 @@ const ImageUploader = ({ images, setImages }) => {
     }
   };
 
+  const handleUploadClick = () => {
+    if (images.length < MAX_IMAGES) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Image count display
+  const imageCountText = `${images.length}/${MAX_IMAGES} images uploaded`;
+
   return (
     <div className='mb-6'>
       <div
         ref={dropAreaRef}
-        className='border-2 border-dashed border-gray-300 rounded-md p-4 mt-1 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors'
-        onClick={() => fileInputRef.current.click()}
+        className={`border-2 border-dashed rounded-md p-4 mt-1 flex flex-col items-center justify-center transition-colors ${
+          images.length >= MAX_IMAGES
+            ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
+            : 'border-gray-300 cursor-pointer hover:border-gray-400'
+        }`}
+        onClick={handleUploadClick}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -63,7 +102,9 @@ const ImageUploader = ({ images, setImages }) => {
         <div className='text-center'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
-            className='mx-auto h-12 w-12 text-gray-400'
+            className={`mx-auto h-12 w-12 ${
+              images.length >= MAX_IMAGES ? 'text-gray-300' : 'text-gray-400'
+            }`}
             fill='none'
             viewBox='0 0 24 24'
             stroke='currentColor'
@@ -75,10 +116,21 @@ const ImageUploader = ({ images, setImages }) => {
               d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
             />
           </svg>
-          <p className='mt-1 text-sm text-blue-500 font-medium'>
-            Click to upload images or drag and drop
+          {images.length >= MAX_IMAGES ? (
+            <p className='mt-1 text-sm text-gray-500 font-medium'>
+              Maximum number of images reached
+            </p>
+          ) : (
+            <>
+              <p className='mt-1 text-sm text-blue-500 font-medium'>
+                Click to upload images or drag and drop
+              </p>
+              <p className='mt-1 text-xs text-gray-500'>Any file up to 10MB</p>
+            </>
+          )}
+          <p className='mt-2 text-xs font-medium text-gray-600'>
+            {imageCountText}
           </p>
-          <p className='mt-1 text-xs text-gray-500'>Any file up to 10MB</p>
         </div>
         <input
           ref={fileInputRef}
@@ -87,8 +139,11 @@ const ImageUploader = ({ images, setImages }) => {
           accept='image/*'
           className='hidden'
           onChange={handleFileChange}
+          disabled={images.length >= MAX_IMAGES}
         />
       </div>
+
+      {error && <div className='mt-2 text-sm text-red-500'>{error}</div>}
 
       {images.length > 0 && (
         <div className='mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4'>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Button from '../components/ui/Button';
-import OutlineButton from '../components/ui/OutlineButton';
+import Button from '../ui/Button';
+import OutlineButton from '../ui/OutlineButton';
 
 const CustomSelect = ({
   name,
@@ -9,7 +9,8 @@ const CustomSelect = ({
   required,
   disabled,
   children,
-  allowCustomOption = false
+  allowCustomOption = false,
+  disableCustomOption = false
 }) => {
   const [isAddingOption, setIsAddingOption] = useState(false);
   const [newOption, setNewOption] = useState('');
@@ -18,14 +19,7 @@ const CustomSelect = ({
   const handleAddOption = () => {
     if (newOption.trim()) {
       setCustomOptions([...customOptions, newOption.trim()]);
-      // Automatically select the new option
-      const event = {
-        target: {
-          name,
-          value: newOption.trim()
-        }
-      };
-      onChange(event);
+      onChange({ target: { name, value: newOption.trim() } });
       setNewOption('');
       setIsAddingOption(false);
     }
@@ -53,11 +47,6 @@ const CustomSelect = ({
                 {option}
               </option>
             ))}
-            {allowCustomOption && (
-              <option value='__add_custom__' disabled>
-                --- Add New Option ---
-              </option>
-            )}
           </select>
           <div className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
             <svg
@@ -73,7 +62,7 @@ const CustomSelect = ({
               />
             </svg>
           </div>
-          {allowCustomOption && (
+          {!disableCustomOption && allowCustomOption && (
             <div className='absolute inset-y-0 right-10 flex items-center'>
               <button
                 type='button'
