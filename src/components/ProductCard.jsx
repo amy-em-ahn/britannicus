@@ -1,33 +1,14 @@
 import React from 'react';
 import { initialBookState } from '../config/productState';
-import Rating from '../components/ui/Rating';
-import Button from '../components/ui/Button';
+import Rating from './ui/Rating';
 import { FaRegHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import SellerOption from './ui/SellerOption';
+import AddToCartButton from './AddToCartButton';
 
-export default function ProductCard({
-  product: {
-    id,
-    image,
-    category,
-    options,
-    title,
-    author,
-    publishedby,
-    year,
-    genre,
-    format,
-    language,
-    price,
-    currency,
-    stock,
-    condition,
-    seller,
-    location,
-    description,
-    views
-  } = initialBookState
-}) {
+export default function ProductCard({ product = initialBookState }) {
+  const { id, image, options, title, price, views } = product;
+
   const truncatedTitle = title.length > 18 ? `${title.slice(0, 18)}..` : title;
   const formatPrice = (value) => {
     if (!value && value !== 0) return '0.00';
@@ -37,14 +18,14 @@ export default function ProductCard({
 
   const navigate = useNavigate();
 
+  const handleProductClick = () => {
+    console.log(`Navigating to: /products/${id}`);
+    navigate(`/products/${id}`, { state: { product } });
+  };
+
   return (
-    <li
-      onClick={() => {
-        navigate(`/products/${id}`);
-      }}
-      className='overflow-hidden p-3 flex flex-col'
-    >
-      <div className='w-full'>
+    <li className='overflow-hidden p-3 flex flex-col'>
+      <div className='w-full' onClick={handleProductClick}>
         <div className='aspect-[3/4] w-full overflow-hidden rounded-md'>
           <img
             src={image}
@@ -55,13 +36,9 @@ export default function ProductCard({
         </div>
       </div>
       <div className='mt-3 px-2 text-md flex flex-col flex-grow justify-between'>
-        <div className='flex flex-col'>
-          <div className='flex'>
-            <p className='bg-gray-200 text-gray-700 text-xs font-semibold rounded-md px-2 py-1 inline-block w-auto'>
-              {options}
-            </p>
-          </div>
-          <h3 className='font-bold text-md mt-1 line-clamp-2 min-h-[2.5rem]'>
+        <div className='flex flex-col' onClick={handleProductClick}>
+          <SellerOption options={options} />
+          <h3 className='font-bold text-md mt-1 line-clamp-2 min-h-[2.5rem] cursor-pointer'>
             {truncatedTitle}
           </h3>
           <p className='text-sm mt-1 min-h-[1.5rem]'>
@@ -76,11 +53,7 @@ export default function ProductCard({
               {views}
             </div>
           </div>
-          <Button
-            text='Add cart'
-            icon='FaShoppingCart'
-            className='w-full bg-gray-700 text-white mt-2'
-          />
+          <AddToCartButton productId={id} productData={product} />
         </div>
       </div>
     </li>

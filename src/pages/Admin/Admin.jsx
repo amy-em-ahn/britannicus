@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import BookUploadForm from '../../components/BookUploadForm';
-import MapUploadForm from '../../components/MapUploadForm';
+import MapUploadForm from '../../components/MapUploadForm/MapUploadForm';
 
 export default function Admin() {
   const location = useLocation();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/ui/Button';
-import { useAuthContext } from '../../components/context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import { Navigate } from 'react-router-dom';
 

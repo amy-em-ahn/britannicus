@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.style.css';
 import User from '../User';
 import Button from '../ui/Button';
-import { useAuthContext } from '../context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 import DropdownMenu from '../../components/ui/DropdownMenu/DropdownMenu';
 
 export default function Navbar() {

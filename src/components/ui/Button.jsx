@@ -1,8 +1,12 @@
 import React from 'react';
 
-export default function Button({ text, onClick, disabled, icon, className }) {
-  const IconComponent = icon ? require('react-icons/fa')[icon] : null;
-
+export default function Button({
+  text,
+  onClick,
+  disabled,
+  icon: Icon,
+  className
+}) {
   return (
     <button
       className={`flex items-center justify-center gap-2 bg-slate-900 text-white py-2 px-5 
@@ -12,7 +16,7 @@ export default function Button({ text, onClick, disabled, icon, className }) {
       onClick={onClick}
       disabled={disabled}
     >
-      {IconComponent && <IconComponent className='text-lg' />}
+      {Icon && <Icon className='text-lg' />}
       {text}
     </button>
   );

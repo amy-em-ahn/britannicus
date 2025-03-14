@@ -7,7 +7,7 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
-import { getDatabase, ref, get, set } from 'firebase/database';
+import { getDatabase, ref, get, set, remove } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -64,14 +64,37 @@ async function adminUser(user) {
 }
 
 // add new products
-export async function addNewProduct(product, imageUrl) {
+export async function addNewProduct(product, imageUrls) {
   const id = uuid();
+
+  // Clean up the product object to remove undefined values
+  const cleanProduct = Object.entries(product).reduce((acc, [key, value]) => {
+    // Skip undefined values
+    if (value === undefined) return acc;
+
+    // Handle arrays - ensure they're valid arrays
+    if (Array.isArray(value)) {
+      acc[key] = value.filter(
+        (item) => item !== undefined && item !== null && item !== ''
+      );
+    } else {
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {});
+
+  // Handle both single image URL (string) and multiple image URLs (array)
+  const images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
+  const primaryImage = images.length > 0 ? images[0] : '';
+
   return set(ref(database, `products/${id}`), {
-    ...product,
+    ...cleanProduct,
     id,
-    price: parseInt(product.price),
-    image: imageUrl,
-    year: product.year ? parseInt(product.year) : '',
+    price: parseInt(cleanProduct.price) || 0,
+    image: primaryImage, // Keep the single image field for backward compatibility
+    images: images, // Add the array of images
+    year: cleanProduct.year ? parseInt(cleanProduct.year) : '',
     createdAt: new Date().toISOString()
   });
 }
@@ -127,4 +150,23 @@ export async function getProductById(productId) {
     console.error('Error fetching product by ID:', error);
     throw error;
   }
+}
+
+// Cart
+export async function getCart(userId) {
+  return get(ref(database, `carts/${userId}`)) //
+    .then((snapshot) => {
+      const items = snapshot.val() || {};
+      console.log('cart items:', items);
+
+      return Object.values(items);
+    });
+}
+
+export async function addOrUpdateToCart(userId, product) {
+  return set(ref(database, `carts/${userId}/${product.Id}`), product);
+}
+
+export async function removeFromCart(userId, productId) {
+  return remove(ref(database, `carts/${userId}/${productId}`));
 }

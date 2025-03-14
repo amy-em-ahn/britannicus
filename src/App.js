@@ -2,7 +2,7 @@ import './App.css';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Hero from './components/Hero/Hero';
-import { AuthContextProvider } from './components/context/AuthContext';
+import { AuthContextProvider } from './context/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
