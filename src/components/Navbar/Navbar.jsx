@@ -48,7 +48,11 @@ export default function Navbar() {
 
           <nav className='navbar-primary-links'>
             {/* Admin dropdown */}
-            {user && <DropdownMenu title='Admin' menuItems={adminMenuItems} />}
+            {user && 
+            <Link to="/admin">Admin</Link>
+            // <DropdownMenu title='Admin' menuItems={adminMenuItems} />
+            
+            }
 
             {/* Products dropdown */}
             <DropdownMenu title='Products' menuItems={productsMenuItems} />

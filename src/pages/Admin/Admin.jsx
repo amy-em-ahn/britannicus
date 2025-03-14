@@ -1,8 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import BookUploadForm from '../../components/BookUploadForm';
 import MapUploadForm from '../../components/MapUploadForm/MapUploadForm';
+import FloatingButton from '../../components/ui/FloatingButton';
 
 export default function Admin() {
   const location = useLocation();
@@ -26,7 +27,7 @@ export default function Admin() {
       </Helmet>
       <section className='w-full'>
         <h1 className='text-2xl font-bold mt-4 text-center'>{title}</h1>
-
+        
         {formType === 'book' && <BookUploadForm />}
         {formType === 'map' && <MapUploadForm />}
         {!formType && (
@@ -35,6 +36,8 @@ export default function Admin() {
             <p className='mt-2'>
               Please select an option from the admin menu to get started.
             </p>
+            <FloatingButton className={'m-[60px] bottom-[60px] right-0'} text={"+ New Map"} path={"/admin/maps"}/>
+            <FloatingButton className={'m-[60px] bottom-0 right-0'} text={"+ New Book"} path={"/admin/books"}/>
           </div>
         )}
       </section>
