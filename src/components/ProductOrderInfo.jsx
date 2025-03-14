@@ -4,6 +4,8 @@ import { FaRegHeart, FaShieldAlt } from 'react-icons/fa';
 import AddToCartButton from './AddToCartButton';
 import { ImBooks } from 'react-icons/im';
 import { FaRegFrownOpen } from 'react-icons/fa';
+import { useAuthContext } from '../context/AuthContext';
+import { addOrUpdateToCart } from '../api/firebase';
 
 export default function ProductOrderInfo({
   currency = 'USD',
@@ -13,6 +15,23 @@ export default function ProductOrderInfo({
   productData
 }) {
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const { uid } = useAuthContext();
+
+  const {
+    id,
+    images,
+    category,
+    options,
+    title,
+    author,
+    publishedby,
+    year,
+    genre,
+    colors,
+    sizes
+  } = productData || {};
 
   const formatPrice = (value) => {
     if (!value && value !== 0) return '0.00';
@@ -41,6 +60,27 @@ export default function ProductOrderInfo({
   const formattedPrice = formatPrice(price);
   const inStock = stock > 0;
 
+  // add to cart
+  const handleClick = () => {
+    const product = {
+      id,
+      images,
+      title,
+      price,
+      quantity
+    };
+
+    if (colors && colors.length > 0 && selectedColor) {
+      product.color = selectedColor;
+    }
+
+    if (sizes && sizes.length > 0 && selectedSize) {
+      product.size = selectedSize;
+    }
+
+    addOrUpdateToCart(uid, product);
+  };
+
   return (
     <div className='bg-white rounded-lg shadow p-4 sticky top-4'>
       <div className='text-center pb-4'>
@@ -63,6 +103,48 @@ export default function ProductOrderInfo({
 
       {inStock && (
         <div className='py-3 border-t'>
+          {colors && colors.length > 0 && (
+            <div className='mb-4'>
+              <span className='text-sm font-medium block mb-2'>Color:</span>
+              <div className='flex flex-wrap gap-2'>
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`w-8 h-8 rounded-full border-2 ${
+                      selectedColor === color
+                        ? 'border-blue-500'
+                        : 'border-gray-300'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    aria-label={color}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {sizes && sizes.length > 0 && (
+            <div className='mb-4'>
+              <span className='text-sm font-medium block mb-2'>Size:</span>
+              <div className='flex flex-wrap gap-2'>
+                {sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-3 py-1 border rounded ${
+                      selectedSize === size
+                        ? 'bg-blue-500 text-white border-blue-500'
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className='flex items-center justify-between mb-4'>
             <span className='text-sm font-medium'>Quantity:</span>
             <div className='flex items-center border rounded-md'>
