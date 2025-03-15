@@ -166,11 +166,11 @@ export default function ProductDetail() {
         <BreadcrumbNav category={category} title={title} />
 
         <div className='grid grid-cols-1 md:grid-cols-12 gap-8'>
-          <div className='md:col-span-4'>
+          <div className='md:col-span-3'>
             <ProductImageCarousel images={images || image} />
           </div>
 
-          <div className='md:col-span-5'>
+          <div className='md:col-span-6'>
             <div className='mb-6'>
               {category && (
                 <p className='text-sm text-blue-600 uppercase'>
