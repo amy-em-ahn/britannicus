@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function CategorySidebar({ currentCategory }) {
+export default function CategorySidebar({ currentCategory, onSelectCategory }) {
   const categories = [
     { id: '', name: 'All Products', path: '/products' },
     { id: 'rare-books', name: 'Rare Books', path: '/products/rare-books' },
@@ -14,8 +14,14 @@ export default function CategorySidebar({ currentCategory }) {
     }
   ];
 
+  const handleClick = () => {
+    if (onSelectCategory) {
+      onSelectCategory();
+    }
+  };
+
   return (
-    <div className='w-56 shrink-0'>
+    <div className='w-full'>
       <h2 className='text-xl font-bold mb-4'>Categories</h2>
       <ul className='space-y-2'>
         {categories.map((category) => (
@@ -27,6 +33,7 @@ export default function CategorySidebar({ currentCategory }) {
                   ? 'bg-slate-900 text-white'
                   : 'hover:bg-slate-100'
               }`}
+              onClick={handleClick}
             >
               {category.name}
             </Link>

@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '../api/firebase';
 import ProductCard from '../components/ProductCard';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 
-const CategorySection = ({ products, category, title, endpoint }) => {
+const CategorySection = ({
+  products,
+  category,
+  title,
+  endpoint,
+  onStatusChange
+}) => {
   if (!products || products.length === 0) {
     return <p className='text-center'>No products available</p>;
   }
@@ -24,7 +30,11 @@ const CategorySection = ({ products, category, title, endpoint }) => {
 
       <ul className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4'>
         {products.slice(0, 6).map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onStatusChange={onStatusChange}
+          />
         ))}
       </ul>
     </section>
@@ -32,6 +42,15 @@ const CategorySection = ({ products, category, title, endpoint }) => {
 };
 
 export default function Home() {
+  const [statusMessage, setStatusMessage] = useState(null);
+
+  const handleStatusChange = (status) => {
+    setStatusMessage(status);
+    setTimeout(() => {
+      setStatusMessage(null);
+    }, 3000);
+  };
+
   const {
     isLoading: loadingRareBooks,
     error: errorRareBooks,
@@ -69,6 +88,20 @@ export default function Home() {
       </Helmet>
 
       <div className='w-full max-w-[1200px] mx-auto'>
+        {statusMessage && (
+          <div
+            className={`m-4 p-4 rounded-md ${
+              statusMessage.type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : statusMessage.type === 'info'
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {statusMessage.message}
+          </div>
+        )}
+
         {loadingRareBooks && (
           <p className='text-center'>Loading Rare Books...</p>
         )}
@@ -83,6 +116,7 @@ export default function Home() {
             category='rare-books'
             title='Rare Books'
             endpoint='rare-books'
+            onStatusChange={handleStatusChange}
           />
         )}
 
@@ -96,6 +130,7 @@ export default function Home() {
             category='maps'
             title='Vintage Maps'
             endpoint='maps'
+            onStatusChange={handleStatusChange}
           />
         )}
 
@@ -113,6 +148,7 @@ export default function Home() {
             category='periodicals'
             title='Periodicals'
             endpoint='periodicals'
+            onStatusChange={handleStatusChange}
           />
         )}
 
@@ -130,6 +166,7 @@ export default function Home() {
             category='first-editions'
             title='First Editions'
             endpoint='first-editions'
+            onStatusChange={handleStatusChange}
           />
         )}
       </div>

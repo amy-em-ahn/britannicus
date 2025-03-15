@@ -49,7 +49,6 @@ const CommonProductFields = ({
           <option value='Auction'>Auction</option>
           <option value='Real estate'>Real Estate</option>
           <option value='Library'>Library</option>
-          <option value='Museum'>Museum</option>
         </CustomSelect>
       </div>
 
