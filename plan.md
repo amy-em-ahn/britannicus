@@ -193,3 +193,5 @@ URL로 직접 상세 페이지 접근 시 데이터 로드 확인
 인증 컨텍스트 사용 시 useAuthContext 훅 활용
 이미 구현된 API 함수들의 파라미터 형식 확인
 컴포넌트 import 경로 정확히 확인
+
+## stock is string for now. we may need to change it

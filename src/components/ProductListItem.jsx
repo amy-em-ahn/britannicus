@@ -82,8 +82,8 @@ export default function ProductListItem({ product, onStatusChange }) {
         <div className='w-full md:w-1/4 md:flex md:justify-end'>
           <div className='w-full md:max-w-[240px]'>
             <ProductOrderInfo
-              price={price}
-              stock={stock}
+              price={price.toLocaleString()}
+              stock={stock.toLocaleString()}
               productId={id}
               productData={product}
               onStatusChange={onStatusChange}
