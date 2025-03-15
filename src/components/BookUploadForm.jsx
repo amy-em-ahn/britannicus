@@ -161,8 +161,8 @@ const BookUploadForm = () => {
                     Language
                   </option>
                   <option value='English'>English</option>
-                  <option value='French'>French</option>
-                  <option value='German'>German</option>
+                  <option value='French'>Korean</option>
+                  <option value='German'>French</option>
                   <option value='Italian'>Italian</option>
                   <option value='Spanish'>Spanish</option>
                   <option value='Latin'>Latin</option>
