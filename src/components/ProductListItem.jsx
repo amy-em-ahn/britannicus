@@ -4,7 +4,7 @@ import SellerOption from './ui/SellerOption';
 import ProductImage from './ProductImage';
 import ProductOrderInfo from './ProductOrderInfo';
 
-export default function ProductListItem({ product }) {
+export default function ProductListItem({ product, onStatusChange }) {
   const navigate = useNavigate();
 
   const {
@@ -19,7 +19,7 @@ export default function ProductListItem({ product }) {
     options,
     price,
     genre,
-    stock
+    stock = 0
   } = product || {};
 
   const handleProductClick = () => {
@@ -38,14 +38,22 @@ export default function ProductListItem({ product }) {
 
   return (
     <li className='py-6 w-full'>
-      <div className='flex gap-6 justify-between'>
+      <div className='flex flex-col md:flex-row gap-4 md:gap-6'>
         {/* Left: Product Image */}
-        <div className='w-1/5 cursor-pointer' onClick={handleProductClick}>
-          <ProductImage image={image} title={title} size='small' />
+        <div
+          className='w-full md:w-1/5 cursor-pointer'
+          onClick={handleProductClick}
+        >
+          <ProductImage
+            image={image}
+            title={title}
+            size='medium'
+            className='mx-auto md:mx-0'
+          />
         </div>
 
         {/* Middle: Product Details */}
-        <div className='w-3/5'>
+        <div className='w-full md:w-3/5 mt-4 md:mt-0'>
           <h2
             className='text-xl font-bold mb-2 cursor-pointer hover:text-blue-600'
             onClick={handleProductClick}
@@ -53,7 +61,6 @@ export default function ProductListItem({ product }) {
             {title}
           </h2>
 
-          {/* Author, Publisher, Year - Skip for maps */}
           {category !== 'maps' && (
             <div className='mb-3 text-gray-700'>
               {author && <p>By {author}</p>}
@@ -71,14 +78,17 @@ export default function ProductListItem({ product }) {
           </div>
         </div>
 
-        {/* Right: ProductOrderInfo for cart functionality */}
-        <div className='w-1/4'>
-          <ProductOrderInfo
-            price={price}
-            stock={stock}
-            productId={id}
-            productData={product}
-          />
+        {/* Right: ProductOrderInfo */}
+        <div className='w-full md:w-1/4 md:flex md:justify-end'>
+          <div className='w-full md:max-w-[240px]'>
+            <ProductOrderInfo
+              price={price}
+              stock={stock}
+              productId={id}
+              productData={product}
+              onStatusChange={onStatusChange}
+            />
+          </div>
         </div>
       </div>
     </li>

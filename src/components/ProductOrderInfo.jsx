@@ -4,18 +4,21 @@ import { ImBooks } from 'react-icons/im';
 import { FaRegFrownOpen } from 'react-icons/fa';
 import { useAuthContext } from '../context/AuthContext';
 import { addOrUpdateToCart } from '../api/firebase';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProductOrderInfo({
   currency = 'USD',
   price,
   stock,
   productId,
-  productData
+  productData,
+  onStatusChange
 }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const { uid } = useAuthContext();
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -59,14 +62,18 @@ export default function ProductOrderInfo({
   const inStock = stock > 0;
 
   // add to cart
-  const handleClick = () => {
+  const handleClick = async () => {
     const product = {
-      id,
-      images,
+      id: productId || id,
+      image: images && images.length > 0 ? images[0] : null,
       title,
       price,
       quantity
     };
+
+    if (author) product.author = author;
+    if (publishedby) product.publishedby = publishedby;
+    if (year) product.year = year;
 
     if (colors && colors.length > 0 && selectedColor) {
       product.color = selectedColor;
@@ -76,7 +83,26 @@ export default function ProductOrderInfo({
       product.size = selectedSize;
     }
 
-    addOrUpdateToCart(uid, product);
+    try {
+      await addOrUpdateToCart(uid, product);
+      queryClient.invalidateQueries(['cart']);
+
+      if (onStatusChange) {
+        onStatusChange({
+          type: 'success',
+          message: 'Item added to cart successfully!'
+        });
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+
+      if (onStatusChange) {
+        onStatusChange({
+          type: 'error',
+          message: 'Failed to add item to cart. Please try again.'
+        });
+      }
+    }
   };
 
   return (
@@ -170,6 +196,7 @@ export default function ProductOrderInfo({
               ...productData,
               quantity
             }}
+            onStatusChange={onStatusChange}
           />
 
           {/* <Button
