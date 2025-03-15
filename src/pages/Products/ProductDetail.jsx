@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import ProductImageCarousel from '../../components/ui/ProductImageCarousel';
 import BreadcrumbNav from '../../components/Navbar/BreadcrumbNav';
 import ProductOrderInfo from '../../components/ProductOrderInfo';
+import ProductOptions from '../../components/ProductOption';
 import Rating from '../../components/ui/Rating';
 import SellerOption from '../../components/ui/SellerOption';
 import { FaAddressBook } from 'react-icons/fa';
@@ -102,6 +103,14 @@ export default function ProductDetail() {
     }, 3000);
   };
 
+  const handleSelectColor = (e) => {
+    setSelectedColor(e.target.value);
+  };
+
+  const handleSelectSize = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
   if (loading) {
     return (
       <div className='w-full max-w-[1200px] mx-auto px-4 py-6 text-center'>
@@ -151,9 +160,6 @@ export default function ProductDetail() {
   else if (category === 'maps') categoryTitle = 'Vintage Maps';
   else if (category === 'periodicals') categoryTitle = 'Periodicals';
   else if (category === 'first-editions') categoryTitle = 'First Editions';
-
-  const handleSelectSize = (e) => setSelectedSize(e.target.value);
-  const handleSelectColor = (e) => setSelectedColor(e.target.value);
 
   // Use arrays if available, otherwise use single values
   const displayGenres = genres || (genre ? [genre] : []);
@@ -253,72 +259,42 @@ export default function ProductDetail() {
                   </div>
                 )}
 
-                {/* Color options */}
-                {displayColors.length > 0 && (
-                  <div>
-                    <div className='flex items-center'>
-                      <p className='text-sm text-gray-500 mr-2 w-16'>Color</p>
-                      <select
-                        onChange={handleSelectColor}
-                        value={selectedColor || ''}
-                        className='border border-gray-300 rounded-md px-2 py-1 text-md flex-grow'
-                      >
-                        {displayColors.map((colorOption, index) => (
-                          <option key={index} value={colorOption}>
-                            {colorOption}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                )}
+                {/* Color and Size Options */}
+                <ProductOptions
+                  colors={displayColors}
+                  sizes={displaySizes}
+                  selectedColor={selectedColor}
+                  selectedSize={selectedSize}
+                  onColorChange={handleSelectColor}
+                  onSizeChange={handleSelectSize}
+                />
 
-                {/* Size options */}
-                {displaySizes.length > 0 && (
-                  <div>
-                    <div className='flex items-center'>
-                      <p className='text-sm text-gray-500 mr-2 w-16'>Size</p>
-                      <select
-                        onChange={handleSelectSize}
-                        value={selectedSize || ''}
-                        className='border border-gray-300 rounded-md px-2 py-1 text-md flex-grow'
-                      >
-                        {displaySizes.map((sizeOption, index) => (
-                          <option key={index} value={sizeOption}>
-                            {sizeOption}
-                          </option>
-                        ))}
-                      </select>
+                {(seller || sellerLocation) && (
+                  <div className='mt-4 pt-4 border-t border-gray-100'>
+                    <div className='text-sm text-gray-500 flex items-center'>
+                      <FaAddressBook className='mr-1' />
+                      {seller && <p className='mr-2'>{seller}</p>}
+                      {sellerLocation && (
+                        <p className='text-gray-600'>{sellerLocation}</p>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
-
-              {(seller || sellerLocation) && (
-                <div className='mt-4 pt-4 border-t border-gray-100'>
-                  <div className='text-sm text-gray-500 flex items-center'>
-                    <FaAddressBook className='mr-1' />
-                    {seller && <p className='mr-2'>{seller}</p>}
-                    {sellerLocation && (
-                      <p className='text-gray-600'>{sellerLocation}</p>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
           <div className='md:col-span-3'>
             <ProductOrderInfo
               currency={currency}
-              price={price.toLocaleString()}
-              stock={stock.toLocaleString()}
+              price={price}
+              stock={stock}
               productId={productId || product.id}
               productData={{
-                ...product,
-                selectedColor,
-                selectedSize
+                ...product
               }}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
               onStatusChange={handleStatusChange}
             />
           </div>

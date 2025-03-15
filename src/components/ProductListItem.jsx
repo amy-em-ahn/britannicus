@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SellerOption from './ui/SellerOption';
 import ProductImage from './ProductImage';
 import ProductOrderInfo from './ProductOrderInfo';
+import ProductOptions from './ProductOption';
 
 export default function ProductListItem({ product, onStatusChange }) {
   const navigate = useNavigate();
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
 
   const {
     id,
@@ -19,8 +22,26 @@ export default function ProductListItem({ product, onStatusChange }) {
     options,
     price,
     genre,
-    stock = 0
+    stock = 0,
+    colors,
+    sizes,
+    color,
+    size
   } = product || {};
+
+  useEffect(() => {
+    if (colors && colors.length > 0) {
+      setSelectedColor(colors[0]);
+    } else if (color) {
+      setSelectedColor(Array.isArray(color) ? color[0] : color);
+    }
+
+    if (sizes && sizes.length > 0) {
+      setSelectedSize(sizes[0]);
+    } else if (size) {
+      setSelectedSize(Array.isArray(size) ? size[0] : size);
+    }
+  }, [colors, sizes, color, size]);
 
   const handleProductClick = () => {
     navigate(`/products/${id}`, { state: { product } });
@@ -35,6 +56,19 @@ export default function ProductListItem({ product, onStatusChange }) {
     };
     return categories[categoryId] || 'General';
   };
+
+  const handleColorChange = (e) => {
+    setSelectedColor(e.target.value);
+  };
+
+  const handleSizeChange = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
+  const displayColors =
+    colors || (color ? (Array.isArray(color) ? color : [color]) : []);
+  const displaySizes =
+    sizes || (size ? (Array.isArray(size) ? size : [size]) : []);
 
   return (
     <li className='py-6 w-full'>
@@ -53,7 +87,7 @@ export default function ProductListItem({ product, onStatusChange }) {
         </div>
 
         {/* Middle: Product Details */}
-        <div className='w-full md:w-3/5 mt-4 md:mt-0'>
+        <div className='w-full md:w-2/5 mt-4 md:mt-0'>
           <h2
             className='text-xl font-bold mb-2 cursor-pointer hover:text-blue-600'
             onClick={handleProductClick}
@@ -76,16 +110,28 @@ export default function ProductListItem({ product, onStatusChange }) {
             <SellerOption options={getCategoryLabel(category)} />
             {options && <SellerOption options={options} />}
           </div>
+
+          {/* Product Options*/}
+          <ProductOptions
+            colors={displayColors}
+            sizes={displaySizes}
+            selectedColor={selectedColor}
+            selectedSize={selectedSize}
+            onColorChange={handleColorChange}
+            onSizeChange={handleSizeChange}
+          />
         </div>
 
         {/* Right: ProductOrderInfo */}
-        <div className='w-full md:w-1/4 md:flex md:justify-end'>
+        <div className='w-full md:w-2/5 md:flex md:justify-end'>
           <div className='w-full md:max-w-[240px]'>
             <ProductOrderInfo
-              price={price.toLocaleString()}
-              stock={stock.toLocaleString()}
+              price={price}
+              stock={stock}
               productId={id}
               productData={product}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
               onStatusChange={onStatusChange}
             />
           </div>

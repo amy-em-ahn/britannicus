@@ -195,3 +195,15 @@ URL로 직접 상세 페이지 접근 시 데이터 로드 확인
 컴포넌트 import 경로 정확히 확인
 
 ## stock is string for now. we may need to change it
+
+## for success / fail adding to cart, change Inline modal -> popup modal
+
+## do not show modal to adjust the number of product
+
+## detail page, the rest of stock does not changed when user added it to cart
+
+## when a new product added, place it to the top
+
+## for home, display 12 of the most recent products - use carousel
+
+## mutate??
