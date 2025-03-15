@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [statusMessage, setStatusMessage] = useState(null);
 
   const productFromState = location.state?.product;
 
@@ -94,6 +95,13 @@ export default function ProductDetail() {
     }
   }, [productId, productFromState]);
 
+  const handleStatusChange = (status) => {
+    setStatusMessage(status);
+    setTimeout(() => {
+      setStatusMessage(null);
+    }, 3000);
+  };
+
   if (loading) {
     return (
       <div className='w-full max-w-[1200px] mx-auto px-4 py-6 text-center'>
@@ -164,6 +172,20 @@ export default function ProductDetail() {
 
       <section className='w-full max-w-[1200px] mx-auto px-4 py-6'>
         <BreadcrumbNav category={category} title={title} />
+
+        {statusMessage && (
+          <div
+            className={`my-4 p-4 rounded-md ${
+              statusMessage.type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : statusMessage.type === 'info'
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {statusMessage.message}
+          </div>
+        )}
 
         <div className='grid grid-cols-1 md:grid-cols-12 gap-8'>
           <div className='md:col-span-3'>
@@ -289,14 +311,15 @@ export default function ProductDetail() {
           <div className='md:col-span-3'>
             <ProductOrderInfo
               currency={currency}
-              price={price}
-              stock={stock}
+              price={price.toLocaleString()}
+              stock={stock.toLocaleString()}
               productId={productId || product.id}
               productData={{
                 ...product,
                 selectedColor,
                 selectedSize
               }}
+              onStatusChange={handleStatusChange}
             />
           </div>
         </div>

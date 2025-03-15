@@ -12,11 +12,6 @@ export default function ProductCard({
   const { id, image, options, title, price } = product;
 
   const truncatedTitle = title.length > 18 ? `${title.slice(0, 18)}..` : title;
-  const formatPrice = (value) => {
-    if (!value && value !== 0) return '0.00';
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    return numValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
 
   const navigate = useNavigate();
 
@@ -44,7 +39,7 @@ export default function ProductCard({
             {truncatedTitle}
           </h3>
           <p className='text-sm mt-1'>
-            Price: <span className='text-black'>${formatPrice(price)}</span>
+            Price: <span className='text-black'>${price.toLocaleString()}</span>
           </p>
         </div>
         <div className='mt-3 flex flex-col'>
