@@ -28,7 +28,7 @@ export default function MyCart() {
       </Helmet>
       <section className='w-full max-w-[1200px] mx-auto px-4 py-6'>
         <BreadcrumbNav />
-        <h1>My Cart</h1>
+        <h1 className='text-2xl font-bold mt-4'>My Cart</h1>
         {!hasProducts && <p>No products in your cart</p>}
         {hasProducts && (
           <>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import ProductImage from '../ProductImage';
 
-export default function ProductImageCarousel({ images }) {
+export default function ProductImageCarousel({ images, title }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const imageArray = Array.isArray(images) ? images : [images];
@@ -32,11 +33,11 @@ export default function ProductImageCarousel({ images }) {
 
   return (
     <div className='relative w-full'>
-      <div className='relative overflow-hidden aspect-square rounded-md'>
-        <img
-          src={imageArray[currentIndex]}
-          alt='Product'
-          className='w-full h-full object-contain'
+      <div className='relative overflow-hidden rounded-md'>
+        <ProductImage
+          image={imageArray[currentIndex]}
+          title={title || 'Product Image'}
+          size='medium'
         />
 
         {imageArray.length > 1 && (
@@ -71,10 +72,11 @@ export default function ProductImageCarousel({ images }) {
                     : 'border-transparent'
                 }`}
             >
-              <img
-                src={img}
-                alt={`Thumbnail ${index + 1}`}
-                className='w-full h-full object-cover'
+              <ProductImage
+                image={img}
+                title={`Thumbnail ${index + 1}`}
+                size='xsmall'
+                className='w-full h-full'
               />
             </div>
           ))}

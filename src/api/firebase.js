@@ -170,3 +170,59 @@ export async function addOrUpdateToCart(userId, product) {
 export async function removeFromCart(userId, productId) {
   return remove(ref(database, `carts/${userId}/${productId}`));
 }
+
+// Category
+export async function getCategoryInfo() {
+  try {
+    const snapshot = await get(ref(database, 'categories'));
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return {
+      'rare-books': {
+        title: 'Rare Books',
+        description:
+          'Our rare books collection features valuable and unique titles from various periods, including signed copies, limited editions, and historically significant works.'
+      },
+      maps: {
+        title: 'Vintage Maps',
+        description:
+          'Explore our collection of antique and vintage maps, including historical cartography, decorative maps, and geographic rarities from around the world.'
+      },
+      periodicals: {
+        title: 'Periodicals',
+        description:
+          'Discover our selection of historical magazines, journals, and newspapers, offering insight into past eras through contemporary reporting and commentary.'
+      },
+      'first-editions': {
+        title: 'First Editions',
+        description:
+          'Our first editions collection features original printings of important literary works, providing collectors with pristine examples of publishing history.'
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return {
+      'rare-books': {
+        title: 'Rare Books',
+        description:
+          'Our rare books collection features valuable and unique titles from various periods.'
+      },
+      maps: {
+        title: 'Vintage Maps',
+        description:
+          'Explore our collection of antique and vintage maps from around the world.'
+      },
+      periodicals: {
+        title: 'Periodicals',
+        description:
+          'Discover our selection of historical magazines, journals, and newspapers.'
+      },
+      'first-editions': {
+        title: 'First Editions',
+        description:
+          'Our first editions collection features original printings of important literary works.'
+      }
+    };
+  }
+}

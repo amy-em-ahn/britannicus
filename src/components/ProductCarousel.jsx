@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import ProductCard from '../ProductCard';
+import ProductCard from './ProductCard';
 import { Link } from 'react-router-dom';
 
 const ProductCarousel = ({ products, category, title }) => {

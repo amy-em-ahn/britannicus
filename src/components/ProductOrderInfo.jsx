@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Button from './ui/Button';
-import { FaRegHeart, FaShieldAlt } from 'react-icons/fa';
 import AddToCartButton from './AddToCartButton';
 import { ImBooks } from 'react-icons/im';
 import { FaRegFrownOpen } from 'react-icons/fa';
@@ -174,16 +172,16 @@ export default function ProductOrderInfo({
             }}
           />
 
-          <Button
+          {/* <Button
             className='w-full mb-2 min-w-40'
             icon={FaRegHeart}
             text='Save for Later'
             onClick={() => alert('Product saved for later')}
-          />
+          /> */}
         </div>
       )}
 
-      <div className='pt-4 border-t'>
+      {/* <div className='pt-4 border-t'>
         <div className='text-sm text-gray-600 flex items-center mb-2'>
           <FaShieldAlt className='mr-2 text-green-600' />
           <span>Secure transaction</span>
@@ -191,7 +189,7 @@ export default function ProductOrderInfo({
         <div className='text-xs text-gray-500'>
           Your purchase is protected through our secure payment process.
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

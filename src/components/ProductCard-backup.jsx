@@ -5,7 +5,6 @@ import { FaRegHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import SellerOption from './ui/SellerOption';
 import AddToCartButton from './AddToCartButton';
-import ProductImage from './ProductImage';
 
 export default function ProductCard({ product = initialBookState }) {
   const { id, image, options, title, price, views } = product;
@@ -28,11 +27,11 @@ export default function ProductCard({ product = initialBookState }) {
     <li className='overflow-hidden p-3 flex flex-col'>
       <div className='w-full' onClick={handleProductClick}>
         <div className='aspect-[3/4] w-full overflow-hidden rounded-md'>
-          <ProductImage
-            image={image}
-            title={title}
-            size='small'
-            className='mx-auto'
+          <img
+            src={image}
+            className='w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer'
+            alt={title}
+            crossOrigin='anonymous'
           />
         </div>
       </div>
