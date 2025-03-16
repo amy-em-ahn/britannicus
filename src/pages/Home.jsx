@@ -4,6 +4,8 @@ import { getProducts } from '../api/firebase';
 import ProductCard from '../components/ProductCard';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import ProductImageCarousel from '../components/ui/ProductImageCarousel';
+import HeroCarousel from '../components/ui/HeroCarousel';
 
 const CategorySection = ({
   products,
@@ -18,6 +20,7 @@ const CategorySection = ({
 
   return (
     <section className='w-full mb-12'>
+      
       <div className='flex justify-between items-center mb-4 px-4'>
         <h2 className='text-2xl font-bold'>{title}</h2>
         <Link
@@ -27,7 +30,6 @@ const CategorySection = ({
           View All
         </Link>
       </div>
-
       <ul className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4'>
         {products.slice(0, 6).map((product) => (
           <ProductCard
@@ -58,6 +60,7 @@ export default function Home() {
   } = useQuery(['products-rare-books-preview'], () =>
     getProducts('rare-books')
   );
+  console.log(rareBooks)
 
   const {
     isLoading: loadingMaps,
@@ -80,13 +83,26 @@ export default function Home() {
   } = useQuery(['products-first-editions-preview'], () =>
     getProducts('first-editions')
   );
-
+  let allProducts;
+  if (rareBooks && maps && periodicals && firstEditions) {
+    allProducts = rareBooks?.concat(maps, periodicals, firstEditions).sort((a, b) => a.createdAt - b.createdAt).splice(0, 12);
+    
+  }
+  
+  // console.log("all products: ", allProducts)
   return (
     <>
       <Helmet>
         <title>Home | Britannicus BMS</title>
       </Helmet>
-
+      {rareBooks && maps && periodicals && firstEditions && 
+      <div>
+        <h1 className='text-center text-[2rem] border-b-4 border-b-slate-900 w-fit m-auto px-10 mb-5'>Recent Additions</h1>
+        <HeroCarousel allProducts={allProducts}/>
+      </div>
+       
+      }
+      {/* <ProductImageCarousel images={}/> */}
       <div className='w-full max-w-[1200px] mx-auto'>
         {statusMessage && (
           <div
