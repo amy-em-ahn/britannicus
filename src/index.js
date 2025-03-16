@@ -15,7 +15,7 @@ import Products from './pages/Products/Products';
 import NewProduct from './pages/Products/NewProduct';
 import ProductDetail from './pages/Products/ProductDetail';
 import MyCart from './pages/MyCart/MyCart';
-import NotFound from './pages/NotFount/NotFound';
+import NotFound from './pages/NotFound/NotFound';
 import Admin from './pages/Admin/Admin';
 import ProtectedRoute from './pages/ProtectedRoute';
 

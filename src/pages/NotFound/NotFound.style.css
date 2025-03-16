@@ -1,0 +1,22 @@
+.page{
+    position: relative;
+    background: linear-gradient(rgba(16, 27, 0, 0.6), rgba(20, 31, 2, 0.1)),
+        url('../../assets/images/hero-img.jpg') center/cover no-repeat;
+    color: white;
+    text-align: center;
+    padding: 8rem 1rem 6rem;
+    height: 100dvh;
+    width: 100dvw;
+    /* font-size: xx-large; */
+    /* display: grid;
+    gap: 10px; */
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+h1 {
+    font-size: 6rem;
+}
+p {
+    font-size: 2rem;
+}
