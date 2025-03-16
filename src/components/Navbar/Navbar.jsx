@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.style.css';
 import User from '../User';
@@ -12,7 +12,9 @@ export default function Navbar() {
   const { user, logout } = useAuthContext();
   const checkboxRef = useRef(null);
   const navigate = useNavigate();
-
+  const [logoutModal, setLogoutModal] = useState({
+    show: false
+  })
   const closeMenu = () => {
     if (checkboxRef.current) {
       checkboxRef.current.checked = false;
@@ -33,10 +35,10 @@ export default function Navbar() {
   ];
 
   // Admin dropdown menu items
-  const adminMenuItems = [
-    { label: 'Add Books', path: '/admin/books' },
-    { label: 'Add maps', path: '/admin/maps' }
-  ];
+  // const adminMenuItems = [
+  //   { label: 'Add Books', path: '/admin/books' },
+  //   { label: 'Add maps', path: '/admin/maps' }
+  // ];
 
   return (
     <header className='navbar'>
@@ -73,7 +75,23 @@ export default function Navbar() {
             )}
             {user && <User user={user} />}
             {!user && <Button text={'Login'} onClick={handleLogin} />}
-            {user && <Button text={'Logout'} onClick={logout} />}
+            {user && <Button text={'Logout'} onClick={() => setLogoutModal({show: true})} />}
+            {user && logoutModal.show && 
+              <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50'>
+                  <div className='bg-white rounded-lg p-6 max-w-sm mx-auto'>
+                  <h3 className='text-lg font-medium text-gray-900 mb-4'>
+                      Confirm Deletion
+                  </h3>
+                  <p className='text-sm text-gray-500 mb-4'>
+                      Are you sure you want to sign-out?
+                  </p>
+                  <div className='flex justify-end gap-3'>
+                      <Button text='cancel' onClick={() => setLogoutModal({show: false})}/>
+                      <Button text="I'm Sure" onClick={logout}/>
+                  </div>
+                  </div>
+              </div>
+            }
           </div>
         </div>
 
