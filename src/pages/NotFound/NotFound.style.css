@@ -14,9 +14,9 @@
     justify-content: center;
     align-items: center;
 }
-h1 {
+.foundh1 {
     font-size: 6rem;
 }
-p {
+.notfoundp {
     font-size: 2rem;
 }
