@@ -84,7 +84,7 @@ export async function addNewProduct(product, imageUrls) {
     return acc;
   }, {});
 
-  // Handle both single image URL (string) and multiple image URLs (array)
+  // Handle both single image URL and multiple image URLs
   const images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
   const primaryImage = images.length > 0 ? images[0] : '';
 
@@ -92,8 +92,8 @@ export async function addNewProduct(product, imageUrls) {
     ...cleanProduct,
     id,
     price: parseInt(cleanProduct.price) || 0,
-    image: primaryImage, // Keep the single image field for backward compatibility
-    images: images, // Add the array of images
+    image: primaryImage,
+    images: images,
     year: cleanProduct.year ? parseInt(cleanProduct.year) : '',
     createdAt: new Date().toISOString()
   });
@@ -154,19 +154,153 @@ export async function getProductById(productId) {
 
 // Cart
 export async function getCart(userId) {
+  console.log('Getting cart for user:', userId);
+  if (!userId) {
+    console.log('No user ID provided for getCart');
+    return [];
+  }
+
   return get(ref(database, `carts/${userId}`)) //
     .then((snapshot) => {
       const items = snapshot.val() || {};
-      console.log('cart items:', items);
+      console.log('Cart items from Firebase:', items);
+      console.log('Cart items as array:', Object.values(items));
 
       return Object.values(items);
+    })
+    .catch((error) => {
+      console.error('Error getting cart:', error);
+      return [];
     });
 }
 
 export async function addOrUpdateToCart(userId, product) {
-  return set(ref(database, `carts/${userId}/${product.Id}`), product);
+  console.log('Adding/updating cart item:', product);
+
+  if (!userId || !product || !product.id) {
+    console.error('Invalid parameters for addOrUpdateToCart:', {
+      userId,
+      product
+    });
+    throw new Error('Invalid parameters: userId and product.id are required');
+  }
+
+  const itemRef = ref(database, `carts/${userId}/${product.id}`);
+  const beforeSnapshot = await get(itemRef);
+  const beforeData = beforeSnapshot.exists() ? beforeSnapshot.val() : null;
+
+  // undefined 값 제거
+  const cleanProduct = Object.entries(product).reduce((acc, [key, value]) => {
+    if (value !== undefined) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
+  if (!cleanProduct.id && product.id) {
+    cleanProduct.id = product.id;
+  }
+
+  await set(itemRef, cleanProduct);
+
+  const afterSnapshot = await get(itemRef);
+  const afterData = afterSnapshot.exists() ? afterSnapshot.val() : null;
+
+  let changed = false;
+  let action = 'updated';
+
+  if (!beforeData && afterData) {
+    changed = true;
+    action = 'added';
+  } else if (beforeData && afterData) {
+    changed = beforeData.quantity !== afterData.quantity;
+  }
+
+  console.log(`Cart item ${changed ? action : 'not changed'}`);
+
+  return {
+    success: true,
+    changed,
+    action,
+    message: changed ? `Item ${action} successfully` : 'No changes were made'
+  };
 }
 
 export async function removeFromCart(userId, productId) {
-  return remove(ref(database, `carts/${userId}/${productId}`));
+  console.log(`Removing product ${productId} from cart for user ${userId}`);
+
+  const itemRef = ref(database, `carts/${userId}/${productId}`);
+  const snapshot = await get(itemRef);
+
+  if (!snapshot.exists()) {
+    console.log(`Item ${productId} does not exist in cart`);
+    return { success: false, message: 'Item not found in cart' };
+  }
+
+  await remove(itemRef);
+
+  const checkSnapshot = await get(itemRef);
+  const success = !checkSnapshot.exists();
+
+  console.log(`Item removal ${success ? 'successful' : 'failed'}`);
+  return {
+    success,
+    message: success ? 'Item removed successfully' : 'Failed to remove item'
+  };
+}
+
+// Category
+export async function getCategoryInfo() {
+  try {
+    const snapshot = await get(ref(database, 'categories'));
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return {
+      'rare-books': {
+        title: 'Rare Books',
+        description:
+          'Our rare books collection features valuable and unique titles from various periods, including signed copies, limited editions, and historically significant works.'
+      },
+      maps: {
+        title: 'Vintage Maps',
+        description:
+          'Explore our collection of antique and vintage maps, including historical cartography, decorative maps, and geographic rarities from around the world.'
+      },
+      periodicals: {
+        title: 'Periodicals',
+        description:
+          'Discover our selection of historical magazines, journals, and newspapers, offering insight into past eras through contemporary reporting and commentary.'
+      },
+      'first-editions': {
+        title: 'First Editions',
+        description:
+          'Our first editions collection features original printings of important literary works, providing collectors with pristine examples of publishing history.'
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return {
+      'rare-books': {
+        title: 'Rare Books',
+        description:
+          'Our rare books collection features valuable and unique titles from various periods.'
+      },
+      maps: {
+        title: 'Vintage Maps',
+        description:
+          'Explore our collection of antique and vintage maps from around the world.'
+      },
+      periodicals: {
+        title: 'Periodicals',
+        description:
+          'Discover our selection of historical magazines, journals, and newspapers.'
+      },
+      'first-editions': {
+        title: 'First Editions',
+        description:
+          'Our first editions collection features original printings of important literary works.'
+      }
+    };
+  }
 }

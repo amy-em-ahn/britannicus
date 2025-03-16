@@ -152,7 +152,11 @@ export default function ProductDetail() {
           </div>
 
           <div className='md:col-span-3'>
-            <ProductOrderInfo currency={currency} price={price} stock={stock} />
+            <ProductOrderInfo
+              currency={currency}
+              price={price.toLocaleString()}
+              stock={stock.toLocaleString()}
+            />
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import ProductImageCarousel from '../../components/ui/ProductImageCarousel';
 import BreadcrumbNav from '../../components/Navbar/BreadcrumbNav';
 import ProductOrderInfo from '../../components/ProductOrderInfo';
+import ProductOptions from '../../components/ProductOption';
 import Rating from '../../components/ui/Rating';
 import SellerOption from '../../components/ui/SellerOption';
 import { FaAddressBook } from 'react-icons/fa';
@@ -17,6 +18,7 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [statusMessage, setStatusMessage] = useState(null);
 
   const productFromState = location.state?.product;
 
@@ -94,6 +96,21 @@ export default function ProductDetail() {
     }
   }, [productId, productFromState]);
 
+  const handleStatusChange = (status) => {
+    setStatusMessage(status);
+    setTimeout(() => {
+      setStatusMessage(null);
+    }, 3000);
+  };
+
+  const handleSelectColor = (e) => {
+    setSelectedColor(e.target.value);
+  };
+
+  const handleSelectSize = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
   if (loading) {
     return (
       <div className='w-full max-w-[1200px] mx-auto px-4 py-6 text-center'>
@@ -144,9 +161,6 @@ export default function ProductDetail() {
   else if (category === 'periodicals') categoryTitle = 'Periodicals';
   else if (category === 'first-editions') categoryTitle = 'First Editions';
 
-  const handleSelectSize = (e) => setSelectedSize(e.target.value);
-  const handleSelectColor = (e) => setSelectedColor(e.target.value);
-
   // Use arrays if available, otherwise use single values
   const displayGenres = genres || (genre ? [genre] : []);
   const displayFormats = formats || (format ? [format] : []);
@@ -165,12 +179,26 @@ export default function ProductDetail() {
       <section className='w-full max-w-[1200px] mx-auto px-4 py-6'>
         <BreadcrumbNav category={category} title={title} />
 
+        {statusMessage && (
+          <div
+            className={`my-4 p-4 rounded-md ${
+              statusMessage.type === 'success'
+                ? 'bg-green-100 text-green-700'
+                : statusMessage.type === 'info'
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {statusMessage.message}
+          </div>
+        )}
+
         <div className='grid grid-cols-1 md:grid-cols-12 gap-8'>
-          <div className='md:col-span-4'>
+          <div className='md:col-span-3'>
             <ProductImageCarousel images={images || image} />
           </div>
 
-          <div className='md:col-span-5'>
+          <div className='md:col-span-6'>
             <div className='mb-6'>
               {category && (
                 <p className='text-sm text-blue-600 uppercase'>
@@ -231,58 +259,28 @@ export default function ProductDetail() {
                   </div>
                 )}
 
-                {/* Color options */}
-                {displayColors.length > 0 && (
-                  <div>
-                    <div className='flex items-center'>
-                      <p className='text-sm text-gray-500 mr-2 w-16'>Color</p>
-                      <select
-                        onChange={handleSelectColor}
-                        value={selectedColor || ''}
-                        className='border border-gray-300 rounded-md px-2 py-1 text-md flex-grow'
-                      >
-                        {displayColors.map((colorOption, index) => (
-                          <option key={index} value={colorOption}>
-                            {colorOption}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                )}
+                {/* Color and Size Options */}
+                <ProductOptions
+                  colors={displayColors}
+                  sizes={displaySizes}
+                  selectedColor={selectedColor}
+                  selectedSize={selectedSize}
+                  onColorChange={handleSelectColor}
+                  onSizeChange={handleSelectSize}
+                />
 
-                {/* Size options */}
-                {displaySizes.length > 0 && (
-                  <div>
-                    <div className='flex items-center'>
-                      <p className='text-sm text-gray-500 mr-2 w-16'>Size</p>
-                      <select
-                        onChange={handleSelectSize}
-                        value={selectedSize || ''}
-                        className='border border-gray-300 rounded-md px-2 py-1 text-md flex-grow'
-                      >
-                        {displaySizes.map((sizeOption, index) => (
-                          <option key={index} value={sizeOption}>
-                            {sizeOption}
-                          </option>
-                        ))}
-                      </select>
+                {(seller || sellerLocation) && (
+                  <div className='mt-4 pt-4 border-t border-gray-100'>
+                    <div className='text-sm text-gray-500 flex items-center'>
+                      <FaAddressBook className='mr-1' />
+                      {seller && <p className='mr-2'>{seller}</p>}
+                      {sellerLocation && (
+                        <p className='text-gray-600'>{sellerLocation}</p>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
-
-              {(seller || sellerLocation) && (
-                <div className='mt-4 pt-4 border-t border-gray-100'>
-                  <div className='text-sm text-gray-500 flex items-center'>
-                    <FaAddressBook className='mr-1' />
-                    {seller && <p className='mr-2'>{seller}</p>}
-                    {sellerLocation && (
-                      <p className='text-gray-600'>{sellerLocation}</p>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -293,10 +291,11 @@ export default function ProductDetail() {
               stock={stock}
               productId={productId || product.id}
               productData={{
-                ...product,
-                selectedColor,
-                selectedSize
+                ...product
               }}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
+              onStatusChange={handleStatusChange}
             />
           </div>
         </div>

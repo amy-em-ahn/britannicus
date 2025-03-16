@@ -1,20 +1,17 @@
 import React from 'react';
 import { initialBookState } from '../config/productState';
-import Rating from './ui/Rating';
-import { FaRegHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import SellerOption from './ui/SellerOption';
 import AddToCartButton from './AddToCartButton';
+import ProductImage from './ProductImage';
 
-export default function ProductCard({ product = initialBookState }) {
-  const { id, image, options, title, price, views } = product;
+export default function ProductCard({
+  product = initialBookState,
+  onStatusChange
+}) {
+  const { id, image, options, title, price } = product;
 
   const truncatedTitle = title.length > 18 ? `${title.slice(0, 18)}..` : title;
-  const formatPrice = (value) => {
-    if (!value && value !== 0) return '0.00';
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    return numValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
 
   const navigate = useNavigate();
 
@@ -27,33 +24,30 @@ export default function ProductCard({ product = initialBookState }) {
     <li className='overflow-hidden p-3 flex flex-col'>
       <div className='w-full' onClick={handleProductClick}>
         <div className='aspect-[3/4] w-full overflow-hidden rounded-md'>
-          <img
-            src={image}
-            className='w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer'
-            alt={title}
-            crossOrigin='anonymous'
+          <ProductImage
+            image={image}
+            title={title}
+            size='small'
+            className='mx-auto'
           />
         </div>
       </div>
-      <div className='mt-3 px-2 text-md flex flex-col flex-grow justify-between'>
+      <div className='px-2 text-md flex flex-col flex-grow justify-between'>
         <div className='flex flex-col' onClick={handleProductClick}>
           <SellerOption options={options} />
-          <h3 className='font-bold text-md mt-1 line-clamp-2 min-h-[2.5rem] cursor-pointer'>
+          <h3 className='font-bold text-md mt-1 line-clamp-2'>
             {truncatedTitle}
           </h3>
-          <p className='text-sm mt-1 min-h-[1.5rem]'>
-            Price: <span className='text-black'>${formatPrice(price)}</span>
+          <p className='text-sm mt-1'>
+            Price: <span className='text-black'>${price.toLocaleString()}</span>
           </p>
         </div>
-        <div className='mt-auto flex flex-col'>
-          <div className='flex items-center justify-between mt-2'>
-            <Rating rating={5} />
-            <div className='flex items-center gap-1 text-gray-500 text-sm'>
-              <FaRegHeart className='text-xl cursor-pointer' />
-              {views}
-            </div>
-          </div>
-          <AddToCartButton productId={id} productData={product} />
+        <div className='mt-3 flex flex-col'>
+          <AddToCartButton
+            productId={id}
+            productData={product}
+            onStatusChange={onStatusChange}
+          />
         </div>
       </div>
     </li>
