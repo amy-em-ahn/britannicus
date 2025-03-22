@@ -15,7 +15,7 @@ export default function ProductListItem({ product, onStatusChange }) {
     image,
     title,
     author,
-    publisher,
+    publishedby,
     year,
     condition,
     category,
@@ -28,7 +28,7 @@ export default function ProductListItem({ product, onStatusChange }) {
     color,
     size
   } = product || {};
-
+  console.log(product)
   useEffect(() => {
     if (colors && colors.length > 0) {
       setSelectedColor(colors[0]);
@@ -98,7 +98,8 @@ export default function ProductListItem({ product, onStatusChange }) {
           {category !== 'maps' && (
             <div className='mb-3 text-gray-700'>
               {author && <p>By {author}</p>}
-              {publisher && <p>Published by {publisher}</p>}
+              {/* {!author && <p>Lol no author</p>} */}
+              {publishedby && <p>Published by {publishedby}</p>}
               {year && <p>Year: {year}</p>}
             </div>
           )}
