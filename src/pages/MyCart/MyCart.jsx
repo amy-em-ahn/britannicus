@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { getCart } from '../../api/firebase';
+import { addOrUpdateToCart, getCart } from '../../api/firebase';
 import { useAuthContext } from '../../context/AuthContext';
 import BreadcrumbNav from '../../components/Navbar/BreadcrumbNav';
 import CartItem from '../../components/Cart/CartItem';
 import Button from '../../components/ui/Button';
 import { FaShoppingCart } from 'react-icons/fa';
+import Modal from '../../components/ui/Modal';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyCart() {
   const { uid } = useAuthContext();
@@ -15,7 +17,10 @@ export default function MyCart() {
 
   console.log('Authentication state:', uid ? 'Logged in' : 'Not logged in');
   console.log('Cart products raw data:', products);
-
+  const [orderModal, setOrderModal] = useState({
+    show: false
+  })
+  const navigate = useNavigate();
   // 각 제품의 키와 값을 확인
   if (products && products.length > 0) {
     products.forEach((product, index) => {
@@ -23,7 +28,7 @@ export default function MyCart() {
       console.log(`Product ${index} full data:`, product);
     });
   }
-
+  
   // Handle status changes from cart items
   const handleStatusChange = (status) => {
     setStatusMessage(status);
@@ -52,7 +57,6 @@ export default function MyCart() {
       (prev, current) => prev + parseInt(current.price) * current.quantity,
       0
     );
-
   if (isLoading) return <p>Loading...</p>;
   return (
     <>
@@ -108,7 +112,24 @@ export default function MyCart() {
               icon={FaShoppingCart}
               text='Place your order'
               className='px-8 py-3'
+              onClick={() => setOrderModal({show: true})}
             />
+            {orderModal.show && 
+              <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50'>
+                    <div className='bg-white rounded-lg p-6 max-w-sm mx-auto'>
+                    <h3 className='text-lg font-medium text-gray-900 mb-4'>
+                        Order Placed!
+                    </h3>
+                    <p className='text-sm text-gray-500 mb-4'>
+                        Thank you for shopping with Britannicus!
+                    </p>
+                    <div className='flex justify-end gap-3'>
+                        <Button text='cancel' onClick={() => setOrderModal({show: false})}/>
+                        <Button text='place order' onClick={() => setOrderModal({show: false})} />
+                    </div>
+                    </div>
+                </div>
+            }
           </>
         )}
       </section>
