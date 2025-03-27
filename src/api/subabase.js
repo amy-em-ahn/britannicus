@@ -90,37 +90,41 @@ export const addNewProduct = async (product, imageUrls) => {
     // Convert frontend product to database format
     const { baseProduct, typeData, category } = productMapper.toDatabase({
       ...product,
-      image: imageUrls
+      image: imageUrls,
     });
-    
-    // Remove any id field from baseProduct to let the database generate it
-    // Keep only the uuid for frontend reference
+
+
+    const randomId = Math.floor(Math.random() * 128); 
+
     const productBase = {
       ...baseProduct,
+      id: randomId, // Assign the random int8 value as the id
       publishedDate: baseProduct.publishedDate || new Date().toISOString(),
+      uuid: crypto.randomUUID(),
     };
-    
-    // Make sure we're not trying to set the primary key
-    delete productBase.id;
-    
+
+    console.log('Final payload to Supabase:', productBase);
+
     console.log('Inserting base product');
-    
+
     // Insert main product
     const { data: insertedProduct, error: productError } = await supabase
       .from('Product')
       .insert(productBase)
       .select()
-      .single();
+      .single();    
 
     if (productError) {
       console.error('Error inserting product:', productError);
       throw productError;
     }
-    
+
     console.log('Product inserted with ID:', insertedProduct.id);
 
     // Insert type-specific data
     let typeInsert;
+
+    const randomId2 = Math.floor(Math.random() * 128); 
     
     if (category === 'rare-books' || category === 'first-editions') {
       console.log('Inserting book data');
@@ -128,6 +132,7 @@ export const addNewProduct = async (product, imageUrls) => {
         .from('Book')
         .insert({
           productId: insertedProduct.id,
+          id: randomId2,
           ...typeData.book
         });
     } 
@@ -137,6 +142,7 @@ export const addNewProduct = async (product, imageUrls) => {
         .from('Map')
         .insert({
           productId: insertedProduct.id,
+          id: randomId2,
           ...typeData.map
         });
     } 
@@ -146,6 +152,7 @@ export const addNewProduct = async (product, imageUrls) => {
         .from('Periodical')
         .insert({
           productId: insertedProduct.id,
+          id: randomId2,
           ...typeData.periodical
         });
     } 
