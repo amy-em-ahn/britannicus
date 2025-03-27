@@ -1,0 +1,9 @@
+id,productId,author,genre,isbn,language,format,spectCategory
+1,4,,,,,,rare-books
+2,9,,,,,,rare-books
+3,16,,,,,,rare-books
+4,21,,,,,,rare-books
+5,22,,,,,,rare-books
+6,23,,,,,,rare-books
+7,24,,,,,,rare-books
+8,30,,{History},,English,Hardcover,first-editions
