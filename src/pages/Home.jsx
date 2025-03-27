@@ -20,7 +20,6 @@ const CategorySection = ({
 
   return (
     <section className='w-full mb-12'>
-      
       <div className='flex justify-between items-center mb-4 px-4'>
         <h2 className='text-2xl font-bold'>{title}</h2>
         <Link
@@ -60,7 +59,7 @@ export default function Home() {
   } = useQuery(['products-rare-books-preview'], () =>
     getProducts('rare-books')
   );
-  console.log(rareBooks)
+  console.log(rareBooks);
 
   const {
     isLoading: loadingMaps,
@@ -85,23 +84,25 @@ export default function Home() {
   );
   let allProducts;
   if (rareBooks && maps && periodicals && firstEditions) {
-    allProducts = rareBooks?.concat(maps, periodicals, firstEditions).sort((a, b) => a.createdAt - b.createdAt).splice(0, 12);
-    
+    allProducts = rareBooks
+      ?.concat(maps, periodicals, firstEditions)
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .splice(0, 12);
   }
-  
+
   // console.log("all products: ", allProducts)
   return (
     <>
       <Helmet>
         <title>Home | Britannicus BMS</title>
       </Helmet>
-      {rareBooks && maps && periodicals && firstEditions && 
+      {/* {rareBooks && maps && periodicals && firstEditions && 
       <div>
         <h1 className='text-center text-[2rem] border-b-4 border-b-slate-900 w-fit m-auto px-10 mb-5'>Recent Additions</h1>
         <HeroCarousel allProducts={allProducts}/>
       </div>
        
-      }
+      } */}
       {/* <ProductImageCarousel images={}/> */}
       <div className='w-full max-w-[1200px] mx-auto'>
         {statusMessage && (
