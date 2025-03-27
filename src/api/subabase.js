@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import { v4 as uuid } from "uuid";
 
+import { productMapper } from "./orm-util";
 // Supabase Config
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -9,42 +9,52 @@ const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
+
 export const getProducts = async (category) => {
   try {
+    console.log('Fetching products for category:', category)
     
     let query = supabase
       .from('Product')
       .select('*, Book(*), Map(*), Periodical(*)')
-
+    
     switch(category) {
       case 'rare-books':
-        query = query.eq('Book.specCategory', 'rare-books')
+        query = query
+          .not('Book', 'is', null)
+          .eq('Book.specCategory', 'rare-books')
         break
+        
       case 'first-editions':
-        query = query.eq('Book.specCategory', 'first-editions')
+        query = query
+          .not('Book', 'is', null)
+          .eq('Book.specCategory', 'first-editions')
         break
+        
       case 'maps':
-        query = query.not('Map.id', 'is', null)
+        query = query
+          .not('Map', 'is', null)
         break
+        
       case 'periodicals':
-        query = query.not('Periodical.id', 'is', null)
+        query = query
+          .not('Periodical', 'is', null)
         break
+        
       default:
-        throw new Error('Invalid category')
+        console.warn('No valid category provided, returning all products')
     }
 
     const { data, error } = await query
     
-    if(error) throw error
+    if(error) {
+      console.error('Supabase query error:', error)
+      throw error
+    }
     
-    // Merge nested relationships and ensure imageUrl is an array
-    return data.map(product => ({
-      ...product,
-      ...product.book?.[0],
-      ...product.map?.[0],
-      ...product.periodical?.[0],
-      image: product.imageUrl ? [product.imageUrl] : []
-    }))
+    console.log(`Found ${data?.length || 0} products for category: ${category}`)
+    
+    return data.map(product => productMapper.toFrontend(product))
 
   } catch(error) {
     console.error('Error fetching products:', error)
@@ -54,7 +64,7 @@ export const getProducts = async (category) => {
 
 export const getProductById = async (productUUID) => {
   try {
-    // Get base product
+
     const { data: productData, error: productError } = await supabase
       .from('Product')
       .select('*, Book(*), Map(*), Periodical(*)')
@@ -64,21 +74,8 @@ export const getProductById = async (productUUID) => {
     if(productError) throw productError
     if(!productData) return null
 
-    // Determine type and get full details
-    let typeData = {}
-    if(productData.book?.length) {
-      typeData = productData.book[0]
-    } else if(productData.map?.length) {
-      typeData = productData.map[0]
-    } else if(productData.periodical?.length) {
-      typeData = productData.periodical[0]
-    }
 
-    return {
-      ...productData,
-      ...typeData,
-      image: productData.imageUrl ? [productData.imageUrl] : []
-    }
+    return productMapper.toFrontend(productData)
 
   } catch(error) {
     console.error('Error fetching product:', error)
@@ -87,238 +84,389 @@ export const getProductById = async (productUUID) => {
 }
 
 export const addNewProduct = async (product, imageUrls) => {
-  const productBase = {
-    title: product.title,
-    price: product.price,
-    currency: product.currency || 'USD',
-    seller: product.seller,
-    location: product.location,
-    description: product.description,
-    imageUrl: imageUrls[0] || null,
-    salesOptions: product.salesOptions,
-    publishedDate: new Date().toISOString(),
-    publisher: product.publisher,
-    stock: product.stock || 0,
-    condition: product.condition,
-    uuid: product.uuid || crypto.randomUUID()
-  }
-
   try {
+    console.log('Adding new product:', product.title);
+    
+    // Convert frontend product to database format
+    const { baseProduct, typeData, category } = productMapper.toDatabase({
+      ...product,
+      image: imageUrls
+    });
+    
+    // Remove any id field from baseProduct to let the database generate it
+    // Keep only the uuid for frontend reference
+    const productBase = {
+      ...baseProduct,
+      publishedDate: baseProduct.publishedDate || new Date().toISOString(),
+    };
+    
+    // Make sure we're not trying to set the primary key
+    delete productBase.id;
+    
+    console.log('Inserting base product');
+    
     // Insert main product
     const { data: insertedProduct, error: productError } = await supabase
-      .from('product')
+      .from('Product')
       .insert(productBase)
       .select()
-      .single()
+      .single();
 
-    if(productError) throw productError
+    if (productError) {
+      console.error('Error inserting product:', productError);
+      throw productError;
+    }
+    
+    console.log('Product inserted with ID:', insertedProduct.id);
 
     // Insert type-specific data
-    let typeInsert
-    switch(product.category) {
-      case 'rare-books':
-      case 'first-editions':
-        typeInsert = await supabase
-          .from('book')
-          .insert({
-            productId: insertedProduct.id,
-            author: product.author,
-            genre: product.genre,
-            isbn: product.isbn,
-            language: product.language,
-            format: product.format,
-            specCategory: product.category
-          })
-        break
-
-      case 'maps':
-        typeInsert = await supabase
-          .from('map')
-          .insert({
-            productId: insertedProduct.id,
-            projection: product.projection,
-            dimensions: product.dimensions,
-            scale: product.scale,
-            detail: product.detail,
-            isDiscontinued: product.isDiscontinued
-          })
-        break
-
-      case 'periodicals':
-        typeInsert = await supabase
-          .from('periodical')
-          .insert({
-            productId: insertedProduct.id,
-            edition: product.edition,
-            volume: product.volume,
-            genre: product.genre,
-            isbn: product.isbn,
-            language: product.language
-          })
-        break
-
-      default:
-        throw new Error('Invalid product category')
+    let typeInsert;
+    
+    if (category === 'rare-books' || category === 'first-editions') {
+      console.log('Inserting book data');
+      typeInsert = await supabase
+        .from('Book')
+        .insert({
+          productId: insertedProduct.id,
+          ...typeData.book
+        });
+    } 
+    else if (category === 'maps') {
+      console.log('Inserting map data');
+      typeInsert = await supabase
+        .from('Map')
+        .insert({
+          productId: insertedProduct.id,
+          ...typeData.map
+        });
+    } 
+    else if (category === 'periodicals') {
+      console.log('Inserting periodical data');
+      typeInsert = await supabase
+        .from('Periodical')
+        .insert({
+          productId: insertedProduct.id,
+          ...typeData.periodical
+        });
+    } 
+    else {
+      throw new Error('Invalid product category: ' + category);
     }
 
-    if(typeInsert.error) {
-      // Rollback product insert if type insert fails
-      await supabase
-        .from('product')
-        .delete()
-        .eq('id', insertedProduct.id)
+    if (typeInsert.error) {
+      console.error('Error inserting type data:', typeInsert.error);
       
-      throw typeInsert.error
+      // Rollback product insert if type insert fails
+      console.log('Rolling back product insert');
+      await supabase
+        .from('Product')
+        .delete()
+        .eq('id', insertedProduct.id);
+      
+      throw typeInsert.error;
     }
+    
+    console.log('Product successfully added with ID:', insertedProduct.id);
 
+    // Return the product in frontend format
     return {
-      ...insertedProduct,
-      ...product,
-      images: imageUrls
-    }
+      ...productMapper.toFrontend({
+        ...insertedProduct,
+        [category === 'maps' ? 'Map' : category === 'periodicals' ? 'Periodical' : 'Book']: [
+          typeData[category === 'maps' ? 'map' : category === 'periodicals' ? 'periodical' : 'book']
+        ]
+      }),
+      image: imageUrls // Ensure images are returned correctly
+    };
 
-  } catch(error) {
-    console.error('Error adding product:', error)
-    throw error
+  } catch (error) {
+    console.error('Error adding product:', error);
+    throw error;
   }
 }
 
-// Add cart functions
+
 export const getCart = async (userId) => {
   try {
+    console.log('Fetching cart for user:', userId);
+    
     // Get user's cart
     const { data: cart, error: cartError } = await supabase
-      .from('cart')
+      .from('Cart')
       .select('id')
       .eq('userId', userId)
-      .single()
+      .single();
 
-    if (cartError || !cart) {
-      console.log('No cart found for user', userId)
-      return []
+    if (cartError) {
+      console.log('No existing cart found, creating new cart for user:', userId);
+      
+      // Create a new cart for the user if one doesn't exist
+      const { data: newCart, error: createError } = await supabase
+        .from('Cart')
+        .insert({ userId, uuid: crypto.randomUUID() })
+        .select()
+        .single();
+        
+      if (createError) throw createError;
+      return []; // Return empty cart since it's newly created
+    }
+
+    if (!cart) {
+      console.log('No cart found for user', userId);
+      return [];
     }
 
     // Get cart items with product details
     const { data: items, error: itemsError } = await supabase
-      .from('cart_item')
+      .from('CartItem')
       .select(`
+        id,
         quantity,
+        productUuid,
         product:productId (
           *,
-          book(*),
-          map(*),
-          periodical(*)
+          Book(*),
+          Map(*),
+          Periodical(*)
         )
       `)
-      .eq('cartId', cart.id)
+      .eq('cartId', cart.id);
 
-    if (itemsError) throw itemsError
+    if (itemsError) throw itemsError;
+    
+    console.log(`Found ${items?.length || 0} items in cart`);
 
-    // Merge product data with quantity
-    return items.map(item => ({
-      ...item.product,
-      ...item.product?.book?.[0],
-      ...item.product?.map?.[0],
-      ...item.product?.periodical?.[0],
-      quantity: item.quantity
-    }))
+    // Map cart items to the format expected by the frontend
+    return items.map(item => {
+      const productData = productMapper.toFrontend(item.product);
+      
+      // Add cart-specific fields
+      return {
+        ...productData,
+        quantity: item.quantity,
+        cartItemId: item.id, // Store the cart item ID for easier updates/removal
+      };
+    });
 
   } catch (error) {
-    console.error('Error fetching cart:', error)
-    return []
+    console.error('Error fetching cart:', error);
+    return [];
   }
-}
+};
 
 export const addOrUpdateToCart = async (userId, product) => {
   try {
+    console.log('Adding/updating product in cart:', product.id);
+    
     // Get or create cart
     const { data: cart, error: cartError } = await supabase
-      .from('cart')
-      .upsert({ userId }, { onConflict: 'userId' })
-      .select()
-      .single()
-
-    if (cartError) throw cartError
+      .from('Cart')
+      .select('id, uuid')
+      .eq('userId', userId)
+      .single();
+    
+    let cartId;
+    
+    if (cartError) {
+      // Create new cart if it doesn't exist
+      const cartUuid = crypto.randomUUID();
+      const { data: newCart, error: createError } = await supabase
+        .from('Cart')
+        .insert({ userId, uuid: cartUuid })
+        .select()
+        .single();
+        
+      if (createError) throw createError;
+      cartId = newCart.id;
+    } else {
+      cartId = cart.id;
+    }
 
     // Get product ID from UUID
     const { data: productData, error: productError } = await supabase
-      .from('product')
+      .from('Product')
       .select('id')
       .eq('uuid', product.id)
-      .single()
+      .single();
 
     if (productError || !productData) {
-      throw new Error('Product not found')
+      throw new Error('Product not found with UUID: ' + product.id);
     }
 
-    // Upsert cart item
-    const { error: itemError } = await supabase
-      .from('cart_item')
-      .upsert(
-        {
-          cartId: cart.id,
+    // Check if item already exists in cart
+    const { data: existingItem, error: checkError } = await supabase
+      .from('CartItem')
+      .select('id, quantity')
+      .match({
+        cartId: cartId,
+        productId: productData.id
+      })
+      .maybeSingle();
+      
+    let result;
+    
+    if (existingItem) {
+      // Update quantity if item exists
+      const newQuantity = product.quantity || (existingItem.quantity + 1);
+      
+      const { error: updateError } = await supabase
+        .from('CartItem')
+        .update({ quantity: newQuantity })
+        .eq('id', existingItem.id);
+        
+      if (updateError) throw updateError;
+      
+      result = {
+        success: true,
+        message: 'Cart item quantity updated',
+        quantity: newQuantity
+      };
+    } else {
+      // Insert new cart item
+      const { error: insertError } = await supabase
+        .from('CartItem')
+        .insert({
+          cartId: cartId,
           productId: productData.id,
           productUuid: product.id,
           quantity: product.quantity || 1
-        },
-        { onConflict: 'cartId,productId' }
-      )
-
-    if (itemError) throw itemError
-
-    return {
-      success: true,
-      message: product.quantity ? 'Quantity updated' : 'Added to cart'
+        });
+        
+      if (insertError) throw insertError;
+      
+      result = {
+        success: true,
+        message: 'Product added to cart',
+        quantity: product.quantity || 1
+      };
     }
 
+    return result;
+
   } catch (error) {
-    console.error('Error updating cart:', error)
-    return { success: false, message: error.message }
+    console.error('Error updating cart:', error);
+    return { success: false, message: error.message };
   }
-}
+};
 
 export const removeFromCart = async (userId, productUUID) => {
   try {
+    console.log('Removing product from cart:', productUUID);
+    
     // Get user's cart
     const { data: cart, error: cartError } = await supabase
-      .from('cart')
+      .from('Cart')
       .select('id')
       .eq('userId', userId)
-      .single()
+      .single();
 
     if (cartError || !cart) {
-      return { success: false, message: 'Cart not found' }
+      return { success: false, message: 'Cart not found' };
     }
 
-    // Get product ID from UUID
-    const { data: productData, error: productError } = await supabase
-      .from('product')
-      .select('id')
-      .eq('uuid', productUUID)
-      .single()
-
-    if (productError || !productData) {
-      return { success: false, message: 'Product not found' }
-    }
-
-    // Delete cart item
+    // Option 1: Remove by productUuid directly
     const { error: deleteError } = await supabase
-      .from('cart_item')
+      .from('CartItem')
       .delete()
       .match({
         cartId: cart.id,
-        productId: productData.id
-      })
+        productUuid: productUUID
+      });
 
-    if (deleteError) throw deleteError
+    if (deleteError) {
+      // Option 2: If that fails, try to get the product ID first
+      const { data: productData } = await supabase
+        .from('Product')
+        .select('id')
+        .eq('uuid', productUUID)
+        .single();
+        
+      if (productData) {
+        const { error: secondDeleteError } = await supabase
+          .from('CartItem')
+          .delete()
+          .match({
+            cartId: cart.id,
+            productId: productData.id
+          });
+          
+        if (secondDeleteError) throw secondDeleteError;
+      } else {
+        throw deleteError;
+      }
+    }
 
-    return { success: true, message: 'Removed from cart' }
+    return { success: true, message: 'Removed from cart' };
 
   } catch (error) {
-    console.error('Error removing from cart:', error)
-    return { success: false, message: error.message }
+    console.error('Error removing from cart:', error);
+    return { success: false, message: error.message };
   }
-}
+};
+
+export const updateCartItemQuantity = async (userId, productUUID, quantity) => {
+  try {
+    console.log(`Updating cart item quantity: ${productUUID} to ${quantity}`);
+    
+    if (quantity <= 0) {
+      // If quantity is zero or negative, remove the item
+      return removeFromCart(userId, productUUID);
+    }
+    
+    // Get user's cart
+    const { data: cart, error: cartError } = await supabase
+      .from('Cart')
+      .select('id')
+      .eq('userId', userId)
+      .single();
+
+    if (cartError || !cart) {
+      return { success: false, message: 'Cart not found' };
+    }
+
+    // Update the cart item quantity
+    const { error: updateError } = await supabase
+      .from('CartItem')
+      .update({ quantity })
+      .match({
+        cartId: cart.id,
+        productUuid: productUUID
+      });
+
+    if (updateError) {
+      // If updating by UUID fails, try with product ID
+      const { data: productData } = await supabase
+        .from('Product')
+        .select('id')
+        .eq('uuid', productUUID)
+        .single();
+        
+      if (productData) {
+        const { error: secondUpdateError } = await supabase
+          .from('CartItem')
+          .update({ quantity })
+          .match({
+            cartId: cart.id,
+            productId: productData.id
+          });
+          
+        if (secondUpdateError) throw secondUpdateError;
+      } else {
+        throw updateError;
+      }
+    }
+
+    return { 
+      success: true, 
+      message: 'Quantity updated',
+      quantity: quantity
+    };
+
+  } catch (error) {
+    console.error('Error updating cart item quantity:', error);
+    return { success: false, message: error.message };
+  }
+};
 
 export const getCategoryInfo = async () => {
   try {
