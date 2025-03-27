@@ -8,7 +8,7 @@ export default function Pagination({ products, currentPage, setCurrentPage }) {
   }
 
   return (
-    <div className="flex justify-center gap-2 mt-4">
+    <div className="flex justify-center gap-2">
       {Array.from({ length: pageCount }, (_, index) => (
         <button
           key={index + 1}
