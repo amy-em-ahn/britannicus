@@ -18,6 +18,9 @@ export default function Products() {
   });
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5;
+  
 
   let categoryId = '';
   if (currentPath.includes('rare-books')) categoryId = 'rare-books';
@@ -49,10 +52,11 @@ export default function Products() {
   } = useQuery([`products-${categoryId || 'all'}`], () =>
     getProducts(categoryId)
   );
-
+  const currentProducts = products
+  ? products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  : [];
   const getUniqueGenres = () => {
     if (!products) return [];
-
     const genres = products
       .flatMap((product) => {
         if (
@@ -124,6 +128,7 @@ export default function Products() {
             <CategorySidebar
               currentCategory={categoryId}
               onSelectCategory={() => setShowMobileSidebar(false)}
+              setCurrentPage={setCurrentPage}
             />
           </div>
 
@@ -133,7 +138,7 @@ export default function Products() {
             <div className='mb-6'>
               <div className='flex flex-wrap gap-2 mb-4'>
                 {availableGenres.map((genre) => (
-                  <GenreTag key={genre} label={genre} />
+                  <GenreTag key={genre} label={genre}/>
                 ))}
               </div>
 
@@ -169,7 +174,7 @@ export default function Products() {
                   </span>
                   {/* Pagination - hidden on small screens */}
                   <div className='hidden md:block'>
-                    <Pagination />
+                    {products && products.length > 0 && <Pagination currentPage={currentPage} products={products} setCurrentPage={setCurrentPage}/>}
                   </div>
                 </div>
 
@@ -190,8 +195,8 @@ export default function Products() {
 
               {/* Product Listing */}
               <ul className='mt-6 divide-y divide-gray-200'>
-                {products && products.length > 0
-                  ? products.map((product) => (
+                {currentProducts && currentProducts.length > 0
+                  ? currentProducts.map((product) => (
                       <ProductListItem
                         key={product.id}
                         product={product}
@@ -207,7 +212,7 @@ export default function Products() {
 
               {/* Mobile Pagination */}
               <div className='flex justify-center mt-6 md:hidden'>
-                <Pagination />
+              {products && products.length > 0 && <Pagination currentPage={1} products={products} />}
               </div>
             </div>
           </div>

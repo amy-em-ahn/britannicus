@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function CategorySidebar({ currentCategory, onSelectCategory }) {
+export default function CategorySidebar({ currentCategory, onSelectCategory, setCurrentPage }) {
   const categories = [
     { id: '', name: 'All Products', path: '/products' },
     { id: 'rare-books', name: 'Rare Books', path: '/products/rare-books' },
@@ -17,6 +17,7 @@ export default function CategorySidebar({ currentCategory, onSelectCategory }) {
   const handleClick = () => {
     if (onSelectCategory) {
       onSelectCategory();
+      setCurrentPage(1)
     }
   };
 
