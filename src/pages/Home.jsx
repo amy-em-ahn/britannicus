@@ -101,7 +101,10 @@ export default function Home() {
         <h1 className='text-center text-[2rem] border-b-4 border-b-slate-900 w-fit m-auto px-10 mb-5'>Recent Additions</h1>
         <HeroCarousel allProducts={allProducts}/>
       </div>
+<<<<<<< HEAD
        
+=======
+>>>>>>> cec7df1b9f32cb523c71dd0a3914456c17c57e5c
       } */}
       {/* <ProductImageCarousel images={}/> */}
       <div className='w-full max-w-[1200px] mx-auto'>
