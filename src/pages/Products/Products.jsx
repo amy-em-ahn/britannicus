@@ -8,6 +8,8 @@ import CategorySidebar from '../../components/CategorySidebar';
 import GenreTag from '../../components/ui/GenreTag';
 import Pagination from '../../components/Pagination';
 import SortSelector from '../../components/SortSelector';
+import DropdownMenu from '../../components/ui/DropdownMenu/DropdownMenu';
+import navbarbg from '../../assets/images/nav-bg.jpg'
 
 export default function Products() {
   const location = useLocation();
@@ -18,6 +20,9 @@ export default function Products() {
   });
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [sortOrder, setSortOrder] = useState('none');
+  const itemsPerPage = 5;
 
   let categoryId = '';
   if (currentPath.includes('rare-books')) categoryId = 'rare-books';
@@ -49,10 +54,36 @@ export default function Products() {
   } = useQuery([`products-${categoryId || 'all'}`], () =>
     getProducts(categoryId)
   );
+  const sortProducts = (products) => {
+    if (!products) return [];
+    return [...products].sort((a, b) => {
+      switch (sortOrder) {
+        case 'price-asc': return a.price - b.price;
+        case 'price-desc': return b.price - a.price;
+        case 'year-asc': return a.yearPublished - b.yearPublished;
+        case 'year-desc': return b.yearPublished - a.yearPublished;
+        default: return 0;
+      }
+    });
+  };
 
+  const sortedProducts = sortProducts(products);
+  const currentProducts = sortedProducts
+    ? sortedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : [];
+
+  const sortMenuItems = [
+    { label: 'None', onClick: () => setSortOrder('none') },
+    { label: 'Price Ascending', onClick: () => setSortOrder('price-asc') },
+    { label: 'Price Descending', onClick: () => setSortOrder('price-desc') },
+    { label: 'Year Published Ascending', onClick: () => setSortOrder('year-asc') },
+    { label: 'Year Published Descending', onClick: () => setSortOrder('year-desc') },
+  ];
+  // const currentProducts = products
+  // ? products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  // : [];
   const getUniqueGenres = () => {
     if (!products) return [];
-
     const genres = products
       .flatMap((product) => {
         if (
@@ -124,6 +155,7 @@ export default function Products() {
             <CategorySidebar
               currentCategory={categoryId}
               onSelectCategory={() => setShowMobileSidebar(false)}
+              setCurrentPage={setCurrentPage}
             />
           </div>
 
@@ -133,7 +165,7 @@ export default function Products() {
             <div className='mb-6'>
               <div className='flex flex-wrap gap-2 mb-4'>
                 {availableGenres.map((genre) => (
-                  <GenreTag key={genre} label={genre} />
+                  <GenreTag key={genre} label={genre}/>
                 ))}
               </div>
 
@@ -160,7 +192,8 @@ export default function Products() {
               )}
 
               {/* Product Count and Sorting */}
-              <div className='flex flex-col md:flex-row md:justify-between md:items-center py-4 border-b border-gray-200 gap-3'>
+              <div className='flex flex-col md:flex-row md:justify-between md:items-center py-4 border-b border-gray-200 gap-3 bg-slate-900 text-white p-5 rounded-md items-center'
+              >
                 <div className='flex flex-wrap items-center gap-4'>
                   <span className='text-gray-600 text-sm md:text-base'>
                     {isLoading
@@ -169,12 +202,14 @@ export default function Products() {
                   </span>
                   {/* Pagination - hidden on small screens */}
                   <div className='hidden md:block'>
-                    <Pagination />
+                    {products && products.length > 0 && <Pagination currentPage={currentPage} products={products} setCurrentPage={setCurrentPage}/>}
                   </div>
                 </div>
 
                 <div>
-                  <SortSelector />
+                  {/* <SortSelector /> */}
+                  <DropdownMenu title={`Sort by: ${sortOrder}`} menuItems={sortMenuItems} className={'right-[0]'}/>
+                  
                 </div>
               </div>
 
@@ -190,8 +225,8 @@ export default function Products() {
 
               {/* Product Listing */}
               <ul className='mt-6 divide-y divide-gray-200'>
-                {products && products.length > 0
-                  ? products.map((product) => (
+                {currentProducts && currentProducts.length > 0
+                  ? currentProducts.map((product) => (
                       <ProductListItem
                         key={product.id}
                         product={product}
@@ -207,7 +242,7 @@ export default function Products() {
 
               {/* Mobile Pagination */}
               <div className='flex justify-center mt-6 md:hidden'>
-                <Pagination />
+              {products && products.length > 0 && <Pagination currentPage={1} products={products} />}
               </div>
             </div>
           </div>
