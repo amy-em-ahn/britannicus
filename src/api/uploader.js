@@ -7,6 +7,10 @@ export async function uploadImage(file) {
   const data = new FormData();
   data.append('file', file);
   data.append('upload_preset', process.env.REACT_APP_CLOUDINARY_PRESET);
+  console.log('Cloudinary Environment Variables Check:', {
+    preset: process.env.REACT_APP_CLOUDINARY_PRESET ? 'Set' : 'Not Set',
+    url: process.env.REACT_APP_CLOUDINARY_URL ? 'Set' : 'Not Set'
+  });
 
   try {
     console.log('Uploading image to Cloudinary...');
