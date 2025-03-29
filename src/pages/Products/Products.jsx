@@ -22,6 +22,7 @@ export default function Products() {
   const [statusMessage, setStatusMessage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1)
   const [sortOrder, setSortOrder] = useState('none');
+  const [serachInput, setSearchInput] = useState('');
   const itemsPerPage = 5;
 
   let categoryId = '';
@@ -66,10 +67,17 @@ export default function Products() {
       }
     });
   };
-
+  const filterProducts = (products) => {
+    if (!products) return [];
+    if (serachInput === '') return products;
+    return products.filter(product =>
+      product.title.toLowerCase().includes(serachInput.toLowerCase())
+    )
+  }
   const sortedProducts = sortProducts(products);
-  const currentProducts = sortedProducts
-    ? sortedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const filteredProducts = filterProducts(sortedProducts);
+  const currentProducts = filteredProducts
+    ? filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : [];
 
   const sortMenuItems = [
@@ -156,6 +164,7 @@ export default function Products() {
               currentCategory={categoryId}
               onSelectCategory={() => setShowMobileSidebar(false)}
               setCurrentPage={setCurrentPage}
+              setSearchInput={setSearchInput}
             />
           </div>
 
@@ -194,6 +203,7 @@ export default function Products() {
               {/* Product Count and Sorting */}
               <div className='flex flex-col md:flex-row md:justify-between md:items-center py-4 border-b border-gray-200 gap-3 bg-slate-900 text-white p-5 rounded-md items-center'
               >
+                <input type='text' className='rounded-md p-2 border text-black' onInput={(e) => setSearchInput(e.target.value)} value={serachInput} placeholder='Search Products'></input>
                 <div className='flex flex-wrap items-center gap-4'>
                   <span className='text-gray-600 text-sm md:text-base'>
                     {isLoading
@@ -242,7 +252,8 @@ export default function Products() {
 
               {/* Mobile Pagination */}
               <div className='flex justify-center mt-6 md:hidden'>
-              {products && products.length > 0 && <Pagination currentPage={1} products={products} />}
+              {/* {products && products.length > 0 && <Pagination currentPage={1} products={products} />} */}
+              {products && products.length > 0 && <Pagination currentPage={currentPage} products={products} setCurrentPage={setCurrentPage}/>}
               </div>
             </div>
           </div>
