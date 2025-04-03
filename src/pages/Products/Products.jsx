@@ -97,7 +97,7 @@ export default function Products() {
         }
         return [];
       })
-      .filter((genre) => genre && genre.trim() !== '');
+      .filter((genre) => typeof genre === 'string' && genre.trim() !== '');
 
     return [...new Set(genres)].sort();
   };
