@@ -94,7 +94,7 @@ export const addNewProduct = async (product, imageUrls) => {
     });
 
 
-    const randomId = Math.floor(Math.random() * 128); 
+    const randomId = Math.floor(Math.random() * (2 ** 63 - 1)); 
 
     const productBase = {
       ...baseProduct,
