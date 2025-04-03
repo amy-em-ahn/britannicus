@@ -2,14 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './DropdownMenu.style.css';
 
-const DropdownMenu = ({ title, menuItems }) => {
+const DropdownMenu = ({ title, menuItems, className }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
+  if (!className || className === "") {
+    className = 'left-[0]'
+  }
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -46,13 +48,18 @@ const DropdownMenu = ({ title, menuItems }) => {
         </svg>
       </button>
       {isOpen && (
-        <div className='dropdown-menu'>
+        <div className={`dropdown-menu ${className}`}>
           {menuItems.map((item, index) => (
             <Link
               key={index}
               to={item.path}
               className='dropdown-item'
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick();
+                }
+                setIsOpen(false);
+              }}
             >
               {item.label}
             </Link>
