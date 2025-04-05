@@ -475,6 +475,96 @@ export const updateCartItemQuantity = async (userId, productUUID, quantity) => {
   }
 };
 
+export const decrementStockOnCheckout = async (userId) => {
+  try {
+    console.log('Processing checkout for user:', userId);
+    
+    // Get user's cart with items
+    const { data: cart, error: cartError } = await supabase
+      .from('Cart')
+      .select('id')
+      .eq('userId', userId)
+      .single();
+
+    if (cartError || !cart) {
+      return { success: false, message: 'Cart not found' };
+    }
+
+    // Get cart items with product details
+    const { data: items, error: itemsError } = await supabase
+      .from('CartItem')
+      .select(`
+        quantity,
+        productId
+      `)
+      .eq('cartId', cart.id);
+
+    if (itemsError) throw itemsError;
+    
+    if (!items || items.length === 0) {
+      return { success: false, message: 'No items in cart' };
+    }
+
+    console.log(`Processing ${items.length} items for checkout`);
+
+    // Process each item in the cart
+    const results = await Promise.all(items.map(async (item) => {
+      // Get current product stock
+      const { data: product, error: productError } = await supabase
+        .from('Product')
+        .select('stock')
+        .eq('id', item.productId)
+        .single();
+        
+      if (productError) {
+        console.error(`Error fetching product ${item.productId}:`, productError);
+        return { success: false, productId: item.productId, error: productError.message };
+      }
+      
+      // Calculate new stock amount
+      const currentStock = product.stock || 0;
+      const newStock = Math.max(0, currentStock - item.quantity); // Prevent negative stock
+      
+      // Update product stock
+      const { error: updateError } = await supabase
+        .from('Product')
+        .update({ stock: newStock })
+        .eq('id', item.productId);
+        
+      if (updateError) {
+        console.error(`Error updating stock for product ${item.productId}:`, updateError);
+        return { success: false, productId: item.productId, error: updateError.message };
+      }
+      
+      return { success: true, productId: item.productId, newStock };
+    }));
+    
+    // Clear the cart after successful checkout
+    const { error: clearError } = await supabase
+      .from('CartItem')
+      .delete()
+      .eq('cartId', cart.id);
+      
+    if (clearError) {
+      console.warn('Error clearing cart after checkout:', clearError);
+      // Continue anyway, as the stock has been updated
+    }
+    
+    const successful = results.filter(r => r.success).length;
+    const failed = results.filter(r => !r.success).length;
+    
+    return { 
+      success: failed === 0, 
+      message: `Checkout completed: ${successful} items processed successfully, ${failed} failed`,
+      details: results
+    };
+
+  } catch (error) {
+    console.error('Error processing checkout:', error);
+    return { success: false, message: error.message };
+  }
+};
+
 export const getCategoryInfo = async () => {
   try {
     // Try to fetch from categories table if exists

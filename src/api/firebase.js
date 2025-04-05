@@ -17,7 +17,8 @@ import {
   getCart as supabaseGetCart,
   addOrUpdateToCart as supabaseAddOrUpdateToCart,
   removeFromCart as supabaseRemoveFromCart,
-  getCategoryInfo as supabaseGetCategoryInfo
+  getCategoryInfo as supabaseGetCategoryInfo,
+  decrementStockOnCheckout as supabaseDecrementStockOnCheckout
 } from './subabase';
 
 const firebaseConfig = {
@@ -107,6 +108,11 @@ export async function addOrUpdateToCart(userId, product) {
 
 export async function removeFromCart(userId, productId) {
   return supabaseRemoveFromCart(userId, productId);
+}
+
+// Checkout
+export async function decrementStockOnCheckout(userId) {
+  return supabaseDecrementStockOnCheckout(userId);
 }
 
 // Category

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { addOrUpdateToCart, getCart } from '../../api/firebase';
+import { addOrUpdateToCart, getCart, decrementStockOnCheckout } from '../../api/firebase';
 import { useAuthContext } from '../../context/AuthContext';
 import BreadcrumbNav from '../../components/Navbar/BreadcrumbNav';
 import CartItem from '../../components/Cart/CartItem';
@@ -12,8 +12,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function MyCart() {
   const { uid } = useAuthContext();
-  const { isLoading, data: products } = useQuery(['cart'], () => getCart(uid));
+  const { isLoading, data: products, refetch } = useQuery(['cart'], () => getCart(uid));
   const [statusMessage, setStatusMessage] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   console.log('Authentication state:', uid ? 'Logged in' : 'Not logged in');
   console.log('Cart products raw data:', products);
@@ -58,6 +59,46 @@ export default function MyCart() {
       0
     );
   if (isLoading) return <p>Loading...</p>;
+
+  // Handle order placement
+  const handlePlaceOrder = async () => {
+    if (!uid) {
+      setStatusMessage({
+        type: 'error',
+        message: 'You must be logged in to place an order'
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await decrementStockOnCheckout(uid);
+      
+      if (result.success) {
+        setStatusMessage({
+          type: 'success',
+          message: 'Order placed successfully!'
+        });
+        // Refresh cart after successful checkout
+        refetch();
+        setOrderModal({show: false});
+      } else {
+        setStatusMessage({
+          type: 'error',
+          message: `Failed to place order: ${result.message}`
+        });
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      setStatusMessage({
+        type: 'error',
+        message: 'An unexpected error occurred during checkout'
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -65,7 +106,7 @@ export default function MyCart() {
       </Helmet>
       <section className='w-full max-w-[1200px] mx-auto p-8 flex flex-col'>
         <BreadcrumbNav />
-        <div className='flex justify-between items-center pb-4 border-b border-gray-300 mt-4'>
+        <div className='flex justify-between items-center pb-4 mt-4 border-b border-gray-300'>
           <h1 className='text-2xl font-bold'>My Cart</h1>
           <p className='text-gray-600'>
             {validProducts.length}{' '}
@@ -91,7 +132,7 @@ export default function MyCart() {
         {hasProducts && (
           <>
             <div>
-              <ul className='border-b border-gray-300 mb-8 p-4 px-8'>
+              <ul className='p-4 px-8 mb-8 border-b border-gray-300'>
                 {validProducts.map((product) => (
                   <CartItem
                     key={product.id || product.Id}
@@ -101,9 +142,9 @@ export default function MyCart() {
                 ))}
               </ul>
 
-              <div className='flex justify-between items-center mb-6 px-2 md:px-8'>
+              <div className='flex justify-between items-center px-2 mb-6 md:px-8'>
                 <p>Total Price</p>
-                <p className='text-xl md:text-2xl font-bold text-pink-600'>
+                <p className='text-xl font-bold text-pink-600 md:text-2xl'>
                   $ {totalPrice.toLocaleString()}
                 </p>
               </div>
@@ -115,17 +156,21 @@ export default function MyCart() {
               onClick={() => setOrderModal({show: true})}
             />
             {orderModal.show && 
-              <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50'>
-                    <div className='bg-white rounded-lg p-6 max-w-sm mx-auto'>
-                    <h3 className='text-lg font-medium text-gray-900 mb-4'>
+              <div className='flex fixed inset-0 z-50 justify-center items-center bg-gray-600 bg-opacity-50'>
+                    <div className='p-6 mx-auto max-w-sm bg-white rounded-lg'>
+                    <h3 className='mb-4 text-lg font-medium text-gray-900'>
                         Order Placed!
                     </h3>
-                    <p className='text-sm text-gray-500 mb-4'>
+                    <p className='mb-4 text-sm text-gray-500'>
                         Thank you for shopping with Britannicus!
                     </p>
-                    <div className='flex justify-end gap-3'>
+                    <div className='flex gap-3 justify-end'>
                         <Button text='cancel' onClick={() => setOrderModal({show: false})}/>
-                        <Button text='place order' onClick={() => setOrderModal({show: false})} />
+                        <Button 
+                          text={isProcessing ? 'Processing...' : 'Place Order'} 
+                          onClick={handlePlaceOrder}
+                          disabled={isProcessing}
+                        />
                     </div>
                     </div>
                 </div>
